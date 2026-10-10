@@ -1,0 +1,29 @@
+---
+import { Image } from 'astro:assets';
+import Icons from './Icons.astro';
+import type { ImageMetadata } from 'astro';
+interface Props { id: string; poster: ImageMetadata; title: string }
+const { id, poster, title } = Astro.props;
+---
+<div class="yt" data-yt={id}>
+  <Image src={poster} alt={`${title} still`} widths={[800, 1400, 2000]} sizes="(max-width: 1280px) 100vw, 1280px" loading="eager" quality={82} />
+  <button class="yt__btn" type="button" aria-label={`Play ${title}`}><span class="play__btn"><Icons name="play" /></span></button>
+</div>
+<script>
+  function initYt() {
+    document.querySelectorAll<HTMLElement>('.yt[data-yt]').forEach((box) => {
+      const btn = box.querySelector('button');
+      btn?.addEventListener('click', () => {
+        const id = box.dataset.yt;
+        const f = document.createElement('iframe');
+        f.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1`;
+        f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        f.allowFullscreen = true;
+        f.title = btn.getAttribute('aria-label') ?? 'Video';
+        box.replaceChildren(f);
+      }, { once: true });
+    });
+  }
+  initYt();
+  document.addEventListener('astro:page-load', initYt);
+</script>

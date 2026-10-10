@@ -1,0 +1,11 @@
+{
+  "_comment": "Copy, rename to YYYY-MM-short-name.json, fill in. The Exhibitions section appears as soon as one real file exists here. Set published:true on your copy.",
+  "title": "Exhibition Title",
+  "venue": "Gallery or Museum",
+  "location": "City",
+  "date": "2026-07",
+  "role": "Exhibiting photographer",
+  "description": "One sentence about the show and the work included.",
+  "url": "",
+  "published": false
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "main",
+    "name": "Eason Wang",
+    "tagline": "Cinematographer & Photographer",
+    "roles": [
+      "Cinematography",
+      "Still Photography"
+    ],
+    "about": [
+      "Eason Wang is a cinematographer and photographer whose work moves between narrative film and documentary stills. He was the cinematographer of the short film Anna's Diary, which won Chinh Gold in the Films up to 10 Minutes category at the 17th International Chinh India Kids Film Festival in New Delhi and was an Official Selection of the Ethos International Children's Film Festival in Santa Monica.",
+      "His still photography follows light and texture across places: monastery rooftops and market stalls in Tibet, hutong doorways and opera costumes in Beijing, and wildlife photographed in the field in Africa in 2024. A long-standing interest in cars runs through a growing series of automotive and road-trip images.",
+      "Beyond the camera he has worked on the exhibition side of photography, taking part in the curation and installation of a group photography show."
+    ],
+    "contact": {
+      "note": "Contact details forthcoming.",
+      "email": "",
+      "instagram": ""
+    },
+    "footerNote": "",
+    "hero": {
+      "gallery": "tibet",
+      "file": "tibet-13.jpg"
+    }
+  }
+]

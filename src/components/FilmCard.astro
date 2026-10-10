@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets';
+import Icons from './Icons.astro';
+import type { Film } from '../lib/content';
+import { getAwards } from '../lib/content';
+interface Props { film: Film; index?: number }
+const { film, index = 0 } = Astro.props;
+const awards = (await getAwards()).filter((a) => a.data.work === film.id);
+---
+<article class="film" data-reveal style={`--i:${index}`}>
+  <a class="card" href={`/work/${film.id}`} aria-label={`Watch ${film.data.title}`}>
+    <div class="card__media">
+      <Image src={film.data.poster} alt={`${film.data.title} still`} widths={[640, 1000, 1500]} sizes="(max-width: 900px) 100vw, 58vw" quality={80} />
+    </div>
+    {film.data.youtubeId && <div class="play"><span class="play__btn"><Icons name="play" /></span></div>}
+  </a>
+  <div class="film__body">
+    <div class="meta meta--gold">{film.data.role} · {film.data.year}</div>
+    <h3 class="film__title"><a href={`/work/${film.id}`}>{film.data.title}</a></h3>
+    {film.data.logline && <p class="film__logline">{film.data.logline}</p>}
+    {awards.length > 0 && (
+      <ul class="film__awards">
+        {awards.map((a) => <li>{a.data.title}{a.data.category ? `, ${a.data.category}` : ''} — {a.data.festival}</li>)}
+      </ul>
+    )}
+    <p style="margin-top:26px"><a class="btn" href={`/work/${film.id}`}>View film <Icons name="arrow" /></a></p>
+  </div>
+</article>

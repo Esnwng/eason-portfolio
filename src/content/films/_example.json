@@ -1,0 +1,22 @@
+{
+  "_comment": "Copy this file, rename it to your-film-title.json (lowercase, dashes), fill in the fields, drop a poster image next to it, and set published to true. Delete this _comment line. Files starting with _ are ignored.",
+  "title": "Film Title",
+  "year": 2026,
+  "role": "Cinematographer",
+  "youtubeId": "PASTE_THE_PART_AFTER_youtu.be/",
+  "poster": "./your-film-title-01.jpg",
+  "logline": "One sentence about the film.",
+  "description": [
+    "First paragraph.",
+    "Second paragraph."
+  ],
+  "credits": [
+    {
+      "label": "Director",
+      "value": "Name"
+    }
+  ],
+  "runtime": "8 min",
+  "order": 2,
+  "published": false
+}

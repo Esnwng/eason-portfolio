@@ -1,0 +1,11 @@
+{
+  "title": "Wildlife",
+  "description": "Animals photographed in the field, from golden snub-nosed monkeys to the African savanna.",
+  "year": "2024",
+  "location": "China & Africa",
+  "order": 3,
+  "cover": "./wildlife-01.jpg",
+  "videos": [
+    { "src": "/video/wildlife-10.mp4", "poster": "/video/wildlife-10.jpg", "caption": "Field clip" }
+  ]
+}

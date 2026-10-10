@@ -1,0 +1,9 @@
+{
+  "_comment": "Copy, rename to YYYY-MM-outlet.json, fill in. The Press section appears on the site as soon as one real file exists here. Set published:true on your copy.",
+  "outlet": "Publication Name",
+  "title": "Headline of the article",
+  "date": "2026-06",
+  "url": "https://",
+  "excerpt": "One or two sentences quoted from the article.",
+  "published": false
+}

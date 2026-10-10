@@ -1,0 +1,12 @@
+{
+  "_comment": "Copy, rename to YYYY-MM-short-name.json, fill in.",
+  "title": "Best Cinematography",
+  "category": "Student Shorts",
+  "festival": "Festival Name",
+  "location": "City, Country",
+  "date": "2026-05",
+  "work": "anna-s-diary",
+  "role": "Cinematographer",
+  "url": "",
+  "published": false
+}

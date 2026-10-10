@@ -1,0 +1,12 @@
+---
+import Icons from './Icons.astro';
+interface Props { title: string; sub?: string; href?: string; linkText?: string; id?: string }
+const { title, sub, href, linkText, id } = Astro.props;
+---
+<div class="section__head" id={id} data-reveal>
+  <div>
+    <h2 class="section__title">{title}</h2>
+    {sub && <p class="section__sub">{sub}</p>}
+  </div>
+  {href && <a class="link-arrow" href={href}>{linkText} <Icons name="arrow" /></a>}
+</div>

@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props { image: ImageMetadata; name: string; tagline: string; roles: string[] }
+const { image, name, tagline, roles } = Astro.props;
+---
+<section class="hero">
+  <Image class="hero__img" src={image} alt="" widths={[800, 1400, 2000, 2400]} sizes="100vw" loading="eager" fetchpriority="high" quality={78} />
+  <div class="hero__shade"></div>
+  <div class="container hero__inner">
+    <div class="hero__text">
+      <div class="hero__line"><h1 class="hero__name" style="--i:0">{name}</h1></div>
+      <div class="hero__line"><p class="hero__tag" style="--i:1">{tagline}</p></div>
+      <div class="hero__line"><p class="hero__roles meta" style="--i:2">
+        {roles.map((r, i) => <Fragment>{i > 0 && <span class="dot"></span>}<span>{r}</span></Fragment>)}
+      </p></div>
+    </div>
+  </div>
+  <div class="hero__scroll" aria-hidden="true"><i></i><span>Scroll</span></div>
+</section>
+<div class="hero__reflection" aria-hidden="true">
+  <Image src={image} alt="" widths={[800, 1400]} sizes="100vw" loading="eager" quality={50} />
+</div>

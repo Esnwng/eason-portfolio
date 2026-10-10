@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import FilmCard from '../../components/FilmCard.astro';
+import { getFilms } from '../../lib/content';
+const films = await getFilms();
+---
+<Base title="Work" description="Film and video work by Eason Wang, cinematographer.">
+  <div class="container page-head">
+    <p class="meta meta--gold" data-reveal>Work</p>
+    <h1 class="page-head__title" data-reveal style="--i:1">Film</h1>
+    <p class="page-head__desc" data-reveal style="--i:2">Narrative shorts and documentary work, listed by year.</p>
+  </div>
+  <div class="container" style="display:grid; gap: clamp(40px, 6vw, 80px)">
+    {films.map((f, i) => <FilmCard film={f} index={i} />)}
+  </div>
+</Base>

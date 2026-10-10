@@ -1,0 +1,25 @@
+{
+  "title": "Anna's Diary",
+  "year": 2023,
+  "role": "Cinematographer",
+  "youtubeId": "n1pE0BL3fTk",
+  "poster": "./anna-s-diary-poster.jpg",
+  "logline": "A short film about a teenage girl, her diary, and the people who read it.",
+  "description": [
+    "Anna's Diary is a narrative short made by a student crew. Eason served as cinematographer, responsible for shot design, lighting and camera operation across the shoot.",
+    "The film won Chinh Gold in the Films up to 10 Minutes category at the 17th International Chinh India Kids Film Festival (New Delhi, November 2023) and was later selected for the Ethos International Children's Film Festival in Santa Monica, California."
+  ],
+  "credits": [
+    {
+      "label": "Directors",
+      "value": "Ryan Zhang, Jeremy Chen"
+    },
+    {
+      "label": "Cinematographer",
+      "value": "Eason Wang"
+    }
+  ],
+  "runtime": "",
+  "order": 1,
+  "published": true
+}

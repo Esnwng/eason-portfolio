@@ -1,0 +1,72 @@
+---
+import Icons from './Icons.astro';
+---
+<div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
+  <div class="lb__stage"><img class="lb__img" alt="" /></div>
+  <button class="lb__btn lb__prev" type="button" aria-label="Previous"><Icons name="arrow" /></button>
+  <button class="lb__btn lb__next" type="button" aria-label="Next"><Icons name="arrow" /></button>
+  <button class="lb__close" type="button" aria-label="Close"><Icons name="close" /></button>
+  <div class="lb__meta"><span class="lb__counter"></span><span class="lb__caption"></span></div>
+</div>
+<script>
+  function initLightbox() {
+    const lb = document.getElementById('lightbox');
+    if (!lb || lb.dataset.ready) return;
+    lb.dataset.ready = '1';
+    const img = lb.querySelector<HTMLImageElement>('.lb__img')!;
+    const counter = lb.querySelector('.lb__counter')!;
+    const caption = lb.querySelector('.lb__caption')!;
+    let items: HTMLAnchorElement[] = [];
+    let i = 0;
+    let lastFocus: Element | null = null;
+
+    const show = (n: number) => {
+      i = (n + items.length) % items.length;
+      const a = items[i];
+      img.classList.remove('is-shown');
+      const next = new window.Image();
+      next.src = a.href;
+      next.onload = () => { img.src = a.href; img.alt = a.dataset.alt ?? ''; requestAnimationFrame(() => img.classList.add('is-shown')); };
+      counter.textContent = `${i + 1} / ${items.length}`;
+      caption.textContent = a.dataset.caption ?? '';
+      // Preload neighbours
+      [i + 1, i - 1].forEach((k) => { const p = items[(k + items.length) % items.length]; if (p) new window.Image().src = p.href; });
+    };
+    const open = (list: HTMLAnchorElement[], n: number) => {
+      items = list; lastFocus = document.activeElement;
+      lb.hidden = false; lb.classList.add('is-open'); document.body.style.overflow = 'hidden';
+      show(n); (lb.querySelector('.lb__close') as HTMLElement).focus();
+    };
+    const close = () => {
+      lb.classList.remove('is-open'); lb.hidden = true; document.body.style.overflow = '';
+      img.classList.remove('is-shown'); img.removeAttribute('src');
+      (lastFocus as HTMLElement | null)?.focus?.();
+    };
+
+    // Capture phase + stopPropagation so Astro's ClientRouter never sees the click and tries to navigate.
+    document.addEventListener('click', (e) => {
+      const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-lightbox]');
+      if (!a) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const group = Array.from(document.querySelectorAll<HTMLAnchorElement>(`a[data-lightbox="${a.dataset.lightbox}"]`));
+      open(group, group.indexOf(a));
+    }, true);
+    lb.querySelector('.lb__prev')!.addEventListener('click', () => show(i - 1));
+    lb.querySelector('.lb__next')!.addEventListener('click', () => show(i + 1));
+    lb.querySelector('.lb__close')!.addEventListener('click', close);
+    lb.addEventListener('click', (e) => { if (e.target === lb || (e.target as HTMLElement).classList.contains('lb__stage')) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowRight') show(i + 1);
+      if (e.key === 'ArrowLeft') show(i - 1);
+    });
+    let sx = 0;
+    lb.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; }, { passive: true });
+    lb.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) show(dx < 0 ? i + 1 : i - 1); });
+    document.addEventListener('astro:before-swap', close);
+  }
+  initLightbox();
+  document.addEventListener('astro:page-load', initLightbox);
+</script>

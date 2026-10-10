@@ -1,0 +1,63 @@
+---
+import SectionHead from './SectionHead.astro';
+import { getAwards, getPress, getExhibitions, getFilms, formatDate } from '../lib/content';
+const [awards, press, exhibitions, films] = await Promise.all([getAwards(), getPress(), getExhibitions(), getFilms()]);
+const filmTitle = (id: string) => films.find((f) => f.id === id)?.data.title ?? '';
+---
+{awards.length > 0 && (
+  <section class="section" id="recognition">
+    <div class="container">
+      <SectionHead title="Recognition" href="/cv" linkText="Full CV" />
+      <ul class="list">
+        {awards.map((a, i) => (
+          <li class="list__row" data-reveal style={`--i:${i}`}>
+            <span class="list__date">{formatDate(a.data.date)}</span>
+            <span>
+              <span class="list__title">{a.data.title}{a.data.category ? ` · ${a.data.category}` : ''}</span>
+              <span class="list__sub" style="display:block">{a.data.url ? <a href={a.data.url} target="_blank" rel="noopener">{a.data.festival}</a> : a.data.festival}{a.data.location ? ` · ${a.data.location}` : ''}</span>
+            </span>
+            <span class="list__right">{a.data.work && <a href={`/work/${a.data.work}`}>{filmTitle(a.data.work)}</a>}{a.data.role ? ` · ${a.data.role}` : ''}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+{exhibitions.length > 0 && (
+  <section class="section" id="exhibitions">
+    <div class="container">
+      <SectionHead title="Exhibitions" />
+      <ul class="list">
+        {exhibitions.map((x, i) => (
+          <li class="list__row" data-reveal style={`--i:${i}`}>
+            <span class="list__date">{formatDate(x.data.date)}</span>
+            <span>
+              <span class="list__title">{x.data.url ? <a href={x.data.url} target="_blank" rel="noopener">{x.data.title}</a> : x.data.title}</span>
+              <span class="list__sub" style="display:block">{x.data.venue}{x.data.location ? ` · ${x.data.location}` : ''}{x.data.description ? ` — ${x.data.description}` : ''}</span>
+            </span>
+            <span class="list__right">{x.data.role}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+{press.length > 0 && (
+  <section class="section" id="press">
+    <div class="container">
+      <SectionHead title="Press" />
+      <ul class="list">
+        {press.map((p, i) => (
+          <li class="list__row" data-reveal style={`--i:${i}`}>
+            <span class="list__date">{formatDate(p.data.date)}</span>
+            <span>
+              <span class="list__title">{p.data.url ? <a href={p.data.url} target="_blank" rel="noopener">{p.data.title}</a> : p.data.title}</span>
+              {p.data.excerpt && <span class="list__sub" style="display:block">“{p.data.excerpt}”</span>}
+            </span>
+            <span class="list__right">{p.data.outlet}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

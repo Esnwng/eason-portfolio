@@ -1,0 +1,15 @@
+---
+import { Image } from 'astro:assets';
+import type { Gallery } from '../lib/content';
+interface Props { gallery: Gallery; index?: number }
+const { gallery, index = 0 } = Astro.props;
+---
+<a class="card tile" href={`/photography/${gallery.id}`} data-reveal style={`--i:${index}`}>
+  <div class="card__media">
+    {gallery.cover && <Image src={gallery.cover} alt={gallery.data.title} widths={[480, 800, 1200]} sizes="(max-width: 560px) 100vw, (max-width: 1024px) 50vw, 25vw" quality={80} />}
+  </div>
+  <div class="tile__caption">
+    <span class="tile__title">{gallery.data.title}</span>
+    <span class="tile__count">{gallery.count} {gallery.count === 1 ? 'image' : 'images'}</span>
+  </div>
+</a>

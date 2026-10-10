@@ -1,0 +1,84 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { getSite } from '../lib/content';
+
+interface Props { title?: string; description?: string; ogImage?: string; }
+const site = await getSite();
+const { title, description = `${site.name} — ${site.tagline}.`, ogImage } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0a0a0b" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <ClientRouter />
+  </head>
+  <body>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+    <div class="grain" aria-hidden="true"></div>
+    <script>
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function initReveal() {
+        const els = document.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-in)');
+        if (prefersReduced || !('IntersectionObserver' in window)) { els.forEach((el) => el.classList.add('is-in')); return; }
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) if (e.isIntersecting) { (e.target as HTMLElement).classList.add('is-in'); io.unobserve(e.target); }
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+        els.forEach((el) => io.observe(el));
+      }
+
+      function initNav() {
+        const nav = document.querySelector('.nav');
+        if (!nav) return;
+        const update = () => nav.classList.toggle('is-scrolled', window.scrollY > 24);
+        update();
+        window.addEventListener('scroll', update, { passive: true });
+      }
+
+      // Cursor-tracked specular highlight + gentle 3D tilt on cards.
+      function initSheen() {
+        const nodes = document.querySelectorAll<HTMLElement>('.card, .ph');
+        nodes.forEach((el) => {
+          if (el.dataset.sheen) return;
+          el.dataset.sheen = '1';
+          const tilt = el.classList.contains('card') && !prefersReduced;
+          el.addEventListener('pointermove', (ev) => {
+            const r = el.getBoundingClientRect();
+            const x = ev.clientX - r.left, y = ev.clientY - r.top;
+            el.style.setProperty('--mx', `${(x / r.width) * 100}%`);
+            el.style.setProperty('--my', `${(y / r.height) * 100}%`);
+            if (tilt) {
+              const rx = ((y / r.height) - 0.5) * -3.5, ry = ((x / r.width) - 0.5) * 3.5;
+              el.style.transform = `perspective(1100px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translateZ(0)`;
+            }
+          });
+          el.addEventListener('pointerleave', () => { if (tilt) el.style.transform = ''; });
+        });
+      }
+
+      function init() { initReveal(); initNav(); initSheen(); }
+      init();
+      document.addEventListener('astro:page-load', init);
+    </script>
+  </body>
+</html>
