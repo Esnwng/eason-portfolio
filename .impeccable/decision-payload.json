@@ -1,0 +1,116 @@
+{
+  "title": "Choose the visual world for the redesign",
+  "question": "The roll assigned The Gallery Hang. Keep it, take an alternate, or re-roll.",
+  "options": [
+    {
+      "id": "assigned",
+      "label": "The Gallery Hang",
+      "kicker": "THE ROLL",
+      "lineage": "museum photography exhibition: painted wall, spot pools, wall labels, red dots",
+      "thesis": "The site is one lit wall. Each work hangs at its own scale with a museum label beneath it, and the lighting is the interface: a spot pool tells you where to look, a label tells you what you are looking at. Refuses the dark full-bleed hero with a thumbnail grid under it.",
+      "palette": ["#2c2d31", "#4b4a4e", "#f3efe7", "#d9d4c9", "#c93c2e"],
+      "materials": ["matte painted wall", "spot-light falloff", "vinyl wall lettering", "card-stock labels", "one red dot"],
+      "viewport": "A title wall: EASON WANG in vinyl at wall scale on the left third, the hero print hanging at eye-line on the right two-thirds inside a soft spot pool, a card label beneath it (title, series, year, medium). The wall continues downward into the hang; no header bar, the nav is a small vinyl wayfinding strip.",
+      "risk": "Museum gray goes flat fast. Without real spot falloff, label discipline and varied hang scale it collapses into a dark template with captions.",
+      "raised": [
+        { "from": "Drawcord cape", "raise": "One material owns the whole plane: the wall is the ground of every page and every state, never a header treatment." },
+        { "from": "Oscilloscope bench", "raise": "Every label is measured: title, series, year, medium, and frame count come from the content files, set on one strict label scale." },
+        { "from": "ANSI nightboard", "raise": "Complete keyboard operation: the hang, the lightbox and the labels are fully traversable without a pointer, and the focus ring is the spot." },
+        { "from": "Angura poster", "raise": "Density courage on the CV: the facts pack into a ruled wall-text panel instead of airy tables." },
+        { "from": "Punk paste-up", "raise": "Reading order is physical: the hang has a walking order and the page is paced like a walk, dense rooms then a quiet one." }
+      ]
+    },
+    {
+      "id": "model-pick",
+      "label": "The Contact Sheet",
+      "kicker": "IMPECCABLE’S PICK",
+      "lineage": "darkroom contact sheets: 35 mm strips, sprocket edges, grease-pencil selects",
+      "thesis": "Selection is the cinematographer's craft. The page is the sheet he marked up: strips of frames on black paper, the selects circled in grease pencil and pulled forward at full size.",
+      "palette": ["#0f0f10", "#f1ede4", "#ff5a1f", "#d7b86a"],
+      "materials": ["black photo paper", "35 mm strips with sprocket holes", "grease pencil", "edge-code lettering"],
+      "viewport": "The viewport is a contact sheet: four strips of frames edge to edge, frame numbers along the sprocket edge, the name set as an edge code. Two frames are circled in orange and already enlarged, overlapping the strips; one is the film, one a still.",
+      "risk": "Familiar territory for photographer portfolios. If the circled selects are not dramatically larger than the strips it reads as a thumbnail wall."
+    },
+    {
+      "id": "challenger-cityscape",
+      "label": "Rain-Night Cityscape",
+      "verdict": "competitive",
+      "lineage": "blue hour into rain-dark night: window grids, transit veins, wet-street reflections",
+      "thesis": "His medium is light; the site is a nocturne where every work is a lit window and wet streets double every light.",
+      "palette": ["#0b1a3a", "#07070a", "#f0a63a", "#c9d6df"],
+      "materials": ["cobalt dusk", "amber signage", "wet asphalt reflections", "silver dawn"],
+      "viewport": "A skyline band of works as lit windows, their reflections doubled beneath in a wet-street mirror; the name as a rooftop sign.",
+      "case": "Fuses with his subject (light, reflection, night exteriors) and the reader feels the mood at once; it holds identification but loses clarity, the atmosphere competes with the photographs.",
+      "risk": "Atmosphere over artifact: the photographs become windows in someone else's picture.",
+      "hero": "https://impeccable.style/worlds/cards/light-shadow-caustics-rain-night-cityscape-hero.webp",
+      "board": "https://impeccable.style/worlds/cards/light-shadow-caustics-rain-night-cityscape.webp"
+    },
+    {
+      "id": "challenger-cape",
+      "label": "Drawcord Cape",
+      "verdict": "declined",
+      "lineage": "silk cape with hidden drawcord channels",
+      "palette": ["#0c0c0c", "#c9a24a", "#3a3d44"],
+      "materials": ["matte black silk", "gold cord"],
+      "case": "Admissions readers do not identify with couture mechanics, and a portfolio has no transformation to pull.",
+      "kept": "One pull reshapes the whole plane: total commitment of one material to the entire surface.",
+      "hero": "https://impeccable.style/worlds/cards/textiles-weave-drape-fashion-drawcord-transforming-cape-hero.webp"
+    },
+    {
+      "id": "challenger-oscilloscope",
+      "label": "Oscilloscope Bench",
+      "verdict": "declined",
+      "lineage": "CRT oscilloscope on a signal bench",
+      "palette": ["#06110a", "#43ff7a", "#8a8f8c", "#ffb020"],
+      "materials": ["phosphor", "etched graticule"],
+      "case": "A tool costume: it says electronics lab, not cinematographer, and the photographs would sit behind a grid that measures nothing about them.",
+      "kept": "Every division means something: labels carry measured facts, never decoration.",
+      "hero": "https://impeccable.style/worlds/cards/scientific-notation-oscilloscope-signal-bench-hero.webp"
+    },
+    {
+      "id": "challenger-bbs",
+      "label": "ANSI Nightboard",
+      "verdict": "declined",
+      "lineage": "dial-up bulletin board, sixteen ANSI colors",
+      "palette": ["#000000", "#55ffff", "#ff55ff", "#ffffff"],
+      "materials": ["CP437 block glyphs", "terminal black"],
+      "case": "A character grid cannot carry photography at the scale the work needs; the audience reads it as nostalgia.",
+      "kept": "Complete keyboard operation and a strict grid.",
+      "hero": "https://impeccable.style/worlds/cards/medium-native-ansi-bbs-nightboard-hero.webp"
+    },
+    {
+      "id": "challenger-angura",
+      "label": "Angura Theatre Poster",
+      "verdict": "declined",
+      "lineage": "underground theatre poster, silkscreened flat color, ray burst",
+      "palette": ["#e5321b", "#1f9e7a", "#f2c200", "#ffffff"],
+      "materials": ["flat screened ink", "hand lettering"],
+      "case": "Loud flat color fights the photographs and reads as a student poster to an admissions reader.",
+      "kept": "Density courage: pack the facts tight where facts belong (the CV).",
+      "hero": "https://impeccable.style/worlds/cards/posters-covers-sleeves-angura-theatre-poster-hero.webp"
+    },
+    {
+      "id": "challenger-zine",
+      "label": "Punk Paste-up",
+      "verdict": "declined",
+      "lineage": "photocopied zine spread, ransom headlines, xerox grit",
+      "palette": ["#111111", "#f7f7f2", "#ff2d95"],
+      "materials": ["toner", "torn paper"],
+      "case": "Degradation is the opposite of what a cinematographer's images need; and it reads as deliberately amateur.",
+      "kept": "Reading order is physical: the page is paced like a walk through rooms.",
+      "hero": "https://impeccable.style/worlds/cards/design-canon-punk-pasteup-table-hero.webp"
+    }
+  ],
+  "reroll": { "registers": ["safer", "bolder"] },
+  "buildPath": { "value": "code", "toggle": false },
+  "canon": true,
+  "canonCard": {
+    "label": "The category standard",
+    "thesis": "The dark cinematic portfolio: full-bleed hero photo, serif name, thumbnail grid, executed at full craft. This is the current build on main.",
+    "palette": ["#0a0a0b", "#ece6da", "#d6b776"],
+    "materials": ["full-bleed photography", "warm serif", "film grain"],
+    "viewport": "A full-bleed photograph with the name over it, sections of cards below.",
+    "risk": "Indistinguishable from every other photographer's site by design."
+  },
+  "steer": true
+}

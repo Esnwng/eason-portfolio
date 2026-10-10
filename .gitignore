@@ -7,3 +7,13 @@ dist/
 originals/
 npm-debug.log*
 pnpm-debug.log*
+
+# impeccable tooling (installed per machine with `npx impeccable install`)
+.claude/skills/
+.claude/agents/
+.claude/settings.local.json
+.impeccable/review/
+.impeccable/build/
+.impeccable/mocks/
+.impeccable/live/
+.impeccable/questions/

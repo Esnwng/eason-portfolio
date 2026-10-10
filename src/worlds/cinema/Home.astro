@@ -1,0 +1,44 @@
+---
+import Layout from './Layout.astro';
+import Hero from './Hero.astro';
+import SectionHead from './SectionHead.astro';
+import FilmCard from './FilmCard.astro';
+import GalleryTile from './GalleryTile.astro';
+import Recognition from './Recognition.astro';
+const { site, films, galleries, awards, press, exhibitions, heroImage, ogImage } = Astro.props;
+---
+<Layout ogImage={ogImage}>
+  <Hero image={heroImage} name={site.name} tagline={site.tagline} roles={site.roles} />
+  {films.length > 0 && (
+    <section class="section" id="work">
+      <div class="container">
+        <SectionHead title="Selected Work" href="/work" linkText="View all work" />
+        {films.slice(0, 3).map((f, i) => <FilmCard film={f} index={i} />)}
+      </div>
+    </section>
+  )}
+  {galleries.length > 0 && (
+    <section class="section" id="photography">
+      <div class="container">
+        <SectionHead title="Photography" href="/photography" linkText="View all photography" />
+        <div class="grid-galleries">{galleries.slice(0, 4).map((g, i) => <GalleryTile gallery={g} index={i} />)}</div>
+      </div>
+    </section>
+  )}
+  <Recognition awards={awards} press={press} exhibitions={exhibitions} films={films} />
+  <section class="section" id="about">
+    <div class="container about">
+      <div data-reveal><h2 class="section__title">About</h2><p class="meta" style="margin-top:14px">{site.roles.join(' · ')}</p></div>
+      <div class="prose" data-reveal style="--i:1">{site.about.map((p) => <p>{p}</p>)}</div>
+    </div>
+  </section>
+  <section class="section" id="contact">
+    <div class="container about">
+      <div data-reveal><h2 class="section__title">Contact</h2></div>
+      <div class="prose" data-reveal style="--i:1">
+        {site.contact.email ? <p><a href={`mailto:${site.contact.email}`} class="lede">{site.contact.email}</a></p> : <p>{site.contact.note}</p>}
+        {site.contact.instagram && <p style="margin-top:8px"><a href={`https://instagram.com/${site.contact.instagram}`} target="_blank" rel="noopener">@{site.contact.instagram}</a></p>}
+      </div>
+    </div>
+  </section>
+</Layout>
