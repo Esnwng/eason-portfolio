@@ -1,11 +1,10 @@
 ---
 import { Image } from 'astro:assets';
 import Icons from './Icons.astro';
-import type { Film } from '../lib/content';
-import { getAwards } from '../lib/content';
-interface Props { film: Film; index?: number }
+import type { FilmWithAwards } from '../../lib/pages';
+interface Props { film: FilmWithAwards; index?: number }
 const { film, index = 0 } = Astro.props;
-const awards = (await getAwards()).filter((a) => a.data.work === film.id);
+const awards = film.awards;
 ---
 <article class="film" data-reveal style={`--i:${index}`}>
   <a class="card" href={`/work/${film.id}`} aria-label={`Watch ${film.data.title}`}>

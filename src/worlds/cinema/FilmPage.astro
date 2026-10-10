@@ -1,0 +1,41 @@
+---
+import Layout from './Layout.astro';
+import YouTube from '../../components/YouTube.astro';
+import Icons from './Icons.astro';
+import { Image } from 'astro:assets';
+import { formatDate } from '../../lib/content';
+const { film, awards, ogImage } = Astro.props;
+---
+<Layout title={film.data.title} description={film.data.logline || `${film.data.title} (${film.data.year}) — ${film.data.role}: Eason Wang.`} ogImage={ogImage}>
+  <div class="container page-head" style="padding-bottom: 28px">
+    <a class="back" href="/work"><Icons name="arrow" /> All work</a>
+    <p class="meta meta--gold" style="margin-top:28px" data-reveal>{film.data.role} · {film.data.year}{film.data.runtime ? ` · ${film.data.runtime}` : ''}</p>
+    <h1 class="page-head__title" data-reveal style="--i:1">{film.data.title}</h1>
+    {film.data.logline && <p class="page-head__desc lede" data-reveal style="--i:2">{film.data.logline}</p>}
+  </div>
+  <div class="container" data-reveal><YouTube id={film.data.youtubeId} poster={film.data.poster} title={film.data.title} /></div>
+  <div class="container about section">
+    <div data-reveal>
+      {film.data.credits.length > 0 && (
+        <dl style="margin:0; display:grid; gap:14px">{film.data.credits.map((c) => <div><dt class="meta">{c.label}</dt><dd style="margin:4px 0 0; font-family:var(--font-display); font-size:22px">{c.value}</dd></div>)}</dl>
+      )}
+      {awards.length > 0 && (
+        <div style="margin-top:32px">
+          <p class="meta">Festivals</p>
+          <ul class="film__awards" style="margin-top:12px">{awards.map((a) => <li>{a.data.title}{a.data.category ? `, ${a.data.category}` : ''} — {a.data.festival} ({formatDate(a.data.date)})</li>)}</ul>
+        </div>
+      )}
+    </div>
+    <div class="prose" data-reveal style="--i:1">{film.data.description.map((p) => <p>{p}</p>)}</div>
+  </div>
+  {awards.some((a) => a.data.image) && (
+    <div class="container certs" data-reveal>
+      {awards.filter((a) => a.data.image).map((a) => (
+        <figure class="cert">
+          <Image src={a.data.image!} alt={`${a.data.title} — ${a.data.festival}`} widths={[640, 1000, 1400]} sizes="(max-width: 760px) 100vw, 700px" quality={82} />
+          <figcaption class="meta">{a.data.title}{a.data.category ? ` · ${a.data.category}` : ''} — {a.data.festival}</figcaption>
+        </figure>
+      ))}
+    </div>
+  )}
+</Layout>

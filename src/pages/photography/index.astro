@@ -1,18 +1,7 @@
 ---
-import Base from '../../layouts/Base.astro';
-import GalleryTile from '../../components/GalleryTile.astro';
-import { getGalleries } from '../../lib/content';
-const galleries = await getGalleries();
+import { worldComponent } from '../../lib/world';
+import { photoIndexProps } from '../../lib/pages';
+const PhotoIndex = await worldComponent('PhotoIndex');
+const props = await photoIndexProps();
 ---
-<Base title="Photography" description="Still photography by Eason Wang: Tibet, Beijing, wildlife and automotive series.">
-  <div class="container page-head">
-    <p class="meta meta--gold" data-reveal>Photography</p>
-    <h1 class="page-head__title" data-reveal style="--i:1">Series</h1>
-    <p class="page-head__desc" data-reveal style="--i:2">Still work grouped by place and subject.</p>
-  </div>
-  <div class="container">
-    <div class="grid-galleries" style="grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr))">
-      {galleries.map((g, i) => <GalleryTile gallery={g} index={i} />)}
-    </div>
-  </div>
-</Base>
+<PhotoIndex {...props} />

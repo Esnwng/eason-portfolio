@@ -1,7 +1,7 @@
 ---
 import SectionHead from './SectionHead.astro';
-import { getAwards, getPress, getExhibitions, getFilms, formatDate } from '../lib/content';
-const [awards, press, exhibitions, films] = await Promise.all([getAwards(), getPress(), getExhibitions(), getFilms()]);
+import { formatDate } from '../../lib/content';
+const { awards, press, exhibitions, films } = Astro.props;
 const filmTitle = (id: string) => films.find((f) => f.id === id)?.data.title ?? '';
 ---
 {awards.length > 0 && (

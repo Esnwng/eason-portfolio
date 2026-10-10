@@ -1,10 +1,7 @@
 ---
-import Base from '../layouts/Base.astro';
+import { worldComponent } from '../lib/world';
+import { getSite } from '../lib/content';
+const NotFound = await worldComponent('NotFound');
+const site = await getSite();
 ---
-<Base title="Not found">
-  <div class="container page-head" style="min-height:60vh">
-    <p class="meta meta--gold">404</p>
-    <h1 class="page-head__title">Nothing here.</h1>
-    <p class="page-head__desc"><a class="link-arrow" href="/">Back to the front page</a></p>
-  </div>
-</Base>
+<NotFound site={site} />
