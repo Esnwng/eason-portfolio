@@ -1,0 +1,12 @@
+---
+import Layout from './Layout.astro';
+import SeriesRoom from './SeriesRoom.astro';
+const { site, galleries } = Astro.props;
+const sizes = [3, 2, 3, 2, 1];
+---
+<Layout title="Photography" description={`Still photography by ${site.name}: ${galleries.map((g: any) => g.data.title).join(', ')}.`} page="photography">
+  <header class="room roomhead is-lit">
+    <h1 class="vinyl vinyl--wall">Photography</h1>
+  </header>
+  {galleries.map((g: any, i: number) => <SeriesRoom gallery={g} index={i} size={sizes[i] ?? 2} />)}
+</Layout>

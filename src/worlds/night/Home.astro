@@ -1,0 +1,119 @@
+---
+import Layout from './Layout.astro';
+import Sign from './Sign.astro';
+import StreetNav from './StreetNav.astro';
+import Band from './Band.astro';
+import Distant from './Distant.astro';
+import SeriesBlock from './SeriesBlock.astro';
+import Icons from '../../components/Icons.astro';
+import { buildSkyline } from './skyline';
+import { formatDate } from '../../lib/content';
+const { site, films, galleries, awards, press, exhibitions, ogImage } = Astro.props;
+const slots = buildSkyline(films, galleries);
+const filmTitle = (id: string) => films.find((f: any) => f.id === id)?.data.title ?? '';
+---
+<Layout home sky="walk" ogImage={ogImage}>
+  <!-- Blue hour: the skyline of works -->
+  <header class="skyline" data-hour="blue" data-weather>
+    <div class="rain" aria-hidden="true"></div>
+    <div class="wrap skyline__head">
+      <Sign name={site.name} tagline={site.tagline} heading />
+    </div>
+    <div class="city">
+      <div class="city__haze" aria-hidden="true"></div>
+      <Distant class="distant" seed={23} />
+      <Band slots={slots} />
+    </div>
+    <div class="curb">
+      <div class="wrap">
+        <StreetNav />
+      </div>
+    </div>
+    <div class="street" aria-hidden="true">
+      <div class="water">
+        <Band slots={slots} mirror />
+        <div class="smears" style={`--cols:${slots.map((s) => `minmax(0, ${s.fr.toFixed(3)}fr)`).join(' ')}`}>
+          {slots.map((s) => <span class:list={[s.film && 'smear', s.film && 'tower--film']} style={`--span-m:${s.spanM}`}></span>)}
+        </div>
+      </div>
+      <div class="rain"></div>
+    </div>
+  </header>
+
+  <!-- Night: the street canyon of series -->
+  {galleries.length > 0 && (
+    <section class="walk-section" data-hour="night" aria-labelledby="canyon-h">
+      <div class="wrap">
+        <div class="section-head">
+          <h2 id="canyon-h" class="h-street">Photography</h2>
+          <a class="plate" href="/photography">All series <Icons name="arrow" /></a>
+        </div>
+        {galleries.map((g: any, i: number) => <SeriesBlock gallery={g} index={i} max={3} />)}
+      </div>
+    </section>
+  )}
+
+  <!-- The river: who, and the record -->
+  <section class="walk-section" data-hour="night" aria-labelledby="about-h">
+    <div class="wrap">
+      <div class="river__lights" aria-hidden="true"></div>
+      <div class="river__grid">
+        <div>
+          <h2 id="about-h" class="h-street">About</h2>
+          <p class="n-meta" style="margin-top:14px">{site.roles.join(' · ')}</p>
+        </div>
+        <div>
+          <div class="n-prose">{site.about.map((p: string) => <p>{p}</p>)}</div>
+          {awards.length > 0 && (
+            <>
+              <h3 class="sub-h" style="margin-top:48px">Festivals</h3>
+              <ul class="record">
+                {awards.map((a: any) => (
+                  <li>
+                    <span class="record__date">{formatDate(a.data.date)}</span>
+                    <span><span class="record__what">{a.data.title}{a.data.category ? `, ${a.data.category}` : ''}</span>{a.data.work && <> · <a href={`/work/${a.data.work}`}>{filmTitle(a.data.work)}</a></>}<span class="record__where">{a.data.festival}{a.data.location ? `, ${a.data.location}` : ''}</span></span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {exhibitions.length > 0 && (
+            <>
+              <h3 class="sub-h" style="margin-top:40px">Exhibitions</h3>
+              <ul class="record">
+                {exhibitions.map((x: any) => (
+                  <li><span class="record__date">{formatDate(x.data.date)}</span><span><span class="record__what">{x.data.url ? <a href={x.data.url}>{x.data.title}</a> : x.data.title}</span><span class="record__where">{x.data.venue}{x.data.location ? `, ${x.data.location}` : ''}{x.data.role ? ` · ${x.data.role}` : ''}</span></span></li>
+                ))}
+              </ul>
+            </>
+          )}
+          {press.length > 0 && (
+            <>
+              <h3 class="sub-h" style="margin-top:40px">Press</h3>
+              <ul class="record">
+                {press.map((p: any) => (
+                  <li><span class="record__date">{formatDate(p.data.date)}</span><span><span class="record__what">{p.data.url ? <a href={p.data.url}>{p.data.title}</a> : p.data.title}</span><span class="record__where">{p.data.outlet}</span></span></li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dawn: contact, then first light behind the city -->
+  <section class="dawn" data-hour="dawn" aria-labelledby="contact-h">
+    <div class="wrap">
+      <h2 id="contact-h" class="h-street">Contact</h2>
+      <div class="dawn__contact">
+        {site.contact.email ? <p><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></p> : <p>{site.contact.note}</p>}
+        {site.contact.instagram && <p><a href={`https://instagram.com/${site.contact.instagram}`} rel="noopener">@{site.contact.instagram}</a></p>}
+      </div>
+      <p class="dawn__cv"><a class="plate" href="/cv">Read the CV <Icons name="arrow" /></a></p>
+    </div>
+    <div class="dawn__horizon" aria-hidden="true">
+      <Distant class="dawn__city" seed={5} h={260} min={0.18} max={0.8} lights={0.12} />
+    </div>
+  </section>
+</Layout>

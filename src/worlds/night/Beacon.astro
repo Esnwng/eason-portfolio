@@ -1,0 +1,16 @@
+---
+// Award beacon on the film tower's roof: a lit light on a mast and one line of sign lettering,
+// built from the award entries only.
+import { beaconLine } from './skyline';
+interface Props { awards: { data: { title: string; category: string; festival: string; date: string } }[]; mirror?: boolean }
+const { awards, mirror = false } = Astro.props;
+const line = beaconLine(awards);
+const full = awards.map((a) => `${a.data.title}${a.data.category ? `, ${a.data.category}` : ''}, ${a.data.festival}, ${a.data.date.slice(0, 4)}`).join('; ');
+---
+{awards.length > 0 && (
+  <div class="beacon">
+    <span class="beacon__mast" aria-hidden="true"><span class="beacon__light"></span></span>
+    <p class="beacon__line">{mirror ? line : <><span aria-hidden="true">{line}</span><span class="sr-only">Festival record: {full}</span></>}</p>
+    <span class="beacon__mount" aria-hidden="true"></span>
+  </div>
+)}

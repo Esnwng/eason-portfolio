@@ -1,7 +1,6 @@
 ---
-import { worldComponent } from '../../lib/world';
+import WorkIndex from '@world/WorkIndex.astro';
 import { workIndexProps } from '../../lib/pages';
-const WorkIndex = await worldComponent('WorkIndex');
 const props = await workIndexProps();
 ---
 <WorkIndex {...props} />

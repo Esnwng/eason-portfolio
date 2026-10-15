@@ -1,0 +1,83 @@
+---
+import './global.css';
+import { getSite } from '../../lib/content';
+
+interface Props { title?: string; description?: string; ogImage?: string; home?: boolean }
+const site = await getSite();
+const { title, description = `${site.name}: ${site.tagline}.`, ogImage, home = false } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | ${site.tagline}`;
+const canonical = new URL(Astro.url.pathname.replace(/index\.html$/, '').replace(/\.html$/, ''), Astro.site);
+const path = Astro.url.pathname;
+const links = [
+  { href: '/work', label: 'Work' },
+  { href: '/photography', label: 'Photography' },
+  { href: '/cv', label: 'CV' },
+];
+const isCurrent = (href: string) => path === href || path.startsWith(href + '/');
+const Brand = home ? 'h1' : 'p';
+const year = new Date().getFullYear();
+const { email, instagram, note } = site.contact;
+---
+<!doctype html>
+<html lang="en" class="w-sheet">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0f0f10" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('draw');
+    </script>
+  </head>
+  <body>
+    <a class="skip code" href="#main">Skip to the sheet</a>
+    <header class="edge code">
+      <Brand class="edge__brand"><a href="/">{site.name}</a><span class="edge__tag">{site.tagline}</span></Brand>
+      <nav aria-label="Primary">
+        <ul class="edge__nav">
+          {links.map((l) => <li><a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="edge edge--foot code">
+      <p>{site.name} &middot; {year}</p>
+      <p class="edge__contact">
+        {email ? <a href={`mailto:${email}`}>{email}</a> : <span>{note}</span>}
+        {instagram && <a href={`https://instagram.com/${instagram}`} rel="noopener">@{instagram}</a>}
+      </p>
+      <ul class="edge__nav">
+        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </footer>
+    <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+      <filter id="grease" x="-5%" y="-5%" width="110%" height="110%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="23" result="n" />
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </svg>
+    <script>
+      // Each grease-pencil mark draws itself once, the first time it comes into view.
+      const marks = document.querySelectorAll<SVGElement>('.mark');
+      const drawing = document.documentElement.classList.contains('draw');
+      if (drawing && 'IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-drawn'); io.unobserve(e.target); }
+        }, { threshold: 0.35 });
+        marks.forEach((m) => io.observe(m));
+      } else {
+        marks.forEach((m) => m.classList.add('is-drawn'));
+      }
+    </script>
+  </body>
+</html>

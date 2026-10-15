@@ -1,0 +1,40 @@
+---
+import Layout from './Layout.astro';
+import Mark from './Mark.astro';
+import Icons from '../../components/Icons.astro';
+import { Image } from 'astro:assets';
+import { formatDate } from '../../lib/content';
+const { films } = Astro.props;
+---
+<Layout title="Work" description="Film work by Eason Wang, cinematographer.">
+  <div class="page head">
+    <h1 class="display title">Work</h1>
+  </div>
+  <div class="page entries">
+    {films.map((f: any, i: number) => {
+      const award = f.awards.find((a: any) => a.data.image) ?? f.awards[0];
+      return (
+        <article class="entry" aria-labelledby={`film-${f.id}`}>
+          <a class="select select--entry" href={`/work/${f.id}`} aria-label={`Watch ${f.data.title}`}>
+            <span class="select__print">
+              <Image src={f.data.poster} alt="" widths={[640, 960, 1280]} sizes="(max-width: 899px) 92vw, 56vw" quality={82} loading={i === 0 ? 'eager' : 'lazy'} />
+            </span>
+            {i === 0 && <Mark kind="loop-wide" delay={200} />}
+          </a>
+          <div class="entry__text">
+            <h2 class="display h2" id={`film-${f.id}`}>{f.data.title}</h2>
+            <p class="code entry__meta">{[f.data.role, f.data.year, f.data.runtime].filter(Boolean).join(' · ')}</p>
+            {award && <p class="note note--inline">{award.data.title} {award.data.date.slice(0, 4)}</p>}
+            {f.data.logline && <p class="lead">{f.data.logline}</p>}
+            {f.awards.length > 0 && (
+              <ul class="record__list">
+                {f.awards.map((a: any) => <li><span class="code record__date">{formatDate(a.data.date)}</span><span>{a.data.title}{a.data.category ? `, ${a.data.category}` : ''}. {a.data.festival}.</span></li>)}
+              </ul>
+            )}
+            <p><a class="go" href={`/work/${f.id}`}>Watch the film <Icons name="arrow" /></a></p>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</Layout>

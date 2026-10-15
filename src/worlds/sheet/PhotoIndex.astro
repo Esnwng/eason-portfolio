@@ -1,0 +1,31 @@
+---
+import Layout from './Layout.astro';
+import Frame from './Frame.astro';
+const { galleries } = Astro.props;
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+---
+<Layout title="Photography" description="Still photography by Eason Wang, laid out as a contact sheet: one roll per series.">
+  <div class="page head">
+    <h1 class="display title">Photography</h1>
+  </div>
+  <div class="rolls">
+    {galleries.map((g: any, gi: number) => {
+      const coverSrc = g.cover?.src;
+      return (
+        <section class="roll" aria-labelledby={`roll-${g.id}`}>
+          <div class="roll__head page">
+            <h2 class="display h2" id={`roll-${g.id}`}><a href={`/photography/${g.id}`}>{g.data.title}</a></h2>
+            <p class="code roll__meta">{[g.data.location, g.data.year, plural(g.images.length, 'frame', 'frames'), g.data.videos.length ? plural(g.data.videos.length, 'clip', 'clips') : ''].filter(Boolean).join(' · ')}</p>
+            {g.data.description && <p class="roll__desc">{g.data.description}</p>}
+          </div>
+          <ol class="reel reel--wrap">
+            {g.images.map((img: any, i: number) => (
+              <Frame href={`/photography/${g.id}#f-${i + 1}`} src={img.src} alt={`${g.data.title}, frame ${i + 1}`} no={i + 1}
+                tick={img.src.src === coverSrc} eager={gi === 0 && i < 8} sizes="(max-width: 599px) 30vw, 160px" />
+            ))}
+          </ol>
+        </section>
+      );
+    })}
+  </div>
+</Layout>

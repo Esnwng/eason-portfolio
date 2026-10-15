@@ -1,0 +1,51 @@
+---
+import Layout from './Layout.astro';
+import YouTube from '../../components/YouTube.astro';
+import Label from './Label.astro';
+import Print from './Print.astro';
+import AwardWall from './AwardWall.astro';
+const { site, film, awards, ogImage } = Astro.props;
+const d = film.data;
+const certs = awards.filter((a: any) => a.data.image);
+---
+<Layout title={d.title} description={d.logline || `${d.title} (${d.year}), ${d.role}: ${site.name}.`} ogImage={ogImage} page="film">
+  <section class="room screening screening--live is-lit" aria-labelledby="film-title">
+    <div class="screening__wall">
+      <h1 class="vinyl vinyl--wall" id="film-title">{d.title}</h1>
+      {d.logline && <p class="walltext">{d.logline}</p>}
+    </div>
+    <div class="alcove">
+      {d.youtubeId ? <YouTube id={d.youtubeId} poster={d.poster} title={d.title} /> : null}
+    </div>
+    <div class="screening__label">
+      <Label title={d.title} dot={awards.length > 0} series={d.role} year={d.year} medium={d.runtime || undefined} />
+    </div>
+    {awards.length > 0 && <AwardWall awards={awards} level={2} class="screening__awards" />}
+  </section>
+
+  <section class="room filmtext" aria-label={`About ${d.title}`}>
+    {d.description.length > 0 && <div class="walltext walltext--long">{d.description.map((p: string) => <p>{p}</p>)}</div>}
+    {d.credits.length > 0 && (
+      <dl class="credits">
+        {d.credits.map((c: any) => <div class="credits__row"><dt>{c.label}</dt><dd>{c.value}</dd></div>)}
+      </dl>
+    )}
+  </section>
+
+  {certs.length > 0 && (
+    <section class="room certwall" aria-label="Certificates">
+      <div class="hang hang--single">
+        {certs.map((a: any) => (
+          <Print src={a.data.image} alt={`${a.data.title} certificate, ${a.data.festival}`} w={52} wm={100} sizes="(max-width: 720px) 92vw, 48vw" widths={[640, 1000, 1400]}>
+            <Label title={`${a.data.title} certificate`} series={a.data.festival} year={a.data.date.slice(0, 4)} />
+          </Print>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <nav class="room doorways" aria-label="Leave the screening room">
+    <a class="vinyl vinyl--small" href="/work">All film</a>
+    <a class="vinyl vinyl--small" href="/photography">Photography</a>
+  </nav>
+</Layout>

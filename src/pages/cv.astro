@@ -1,7 +1,6 @@
 ---
-import { worldComponent } from '../lib/world';
+import CVPage from '@world/CVPage.astro';
 import { cvProps } from '../lib/pages';
-const CVPage = await worldComponent('CVPage');
 const props = await cvProps();
 ---
 <CVPage {...props} />

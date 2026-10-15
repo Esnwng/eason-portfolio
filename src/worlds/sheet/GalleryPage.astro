@@ -1,0 +1,42 @@
+---
+import Layout from './Layout.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import Icons from '../../components/Icons.astro';
+import { Image } from 'astro:assets';
+const { gallery, full, next, ogImage } = Astro.props;
+const d = gallery.data;
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+const code = [d.title, d.location, d.year, plural(gallery.images.length, 'frame', 'frames'), d.videos.length ? plural(d.videos.length, 'clip', 'clips') : ''].filter(Boolean).join(' · ');
+---
+<Layout title={d.title} description={d.description || `${d.title}: photography by Eason Wang.`} ogImage={ogImage}>
+  <div class="page head head--tight">
+    <a class="backlink code" href="/photography"><Icons name="arrow" /> Photography</a>
+    <h1 class="display title">{d.title}</h1>
+    {d.description && <p class="lead">{d.description}</p>}
+  </div>
+
+  <div class="enlarge">
+    <p class="enlarge__code code" aria-hidden="true">{code}</p>
+    <div class="grid-enl">
+      {gallery.images.map((img: any, i: number) => (
+        <figure class="enl" id={`f-${i + 1}`} style={`--ar: ${(img.src.width / img.src.height).toFixed(4)}`}>
+          <a class="enl__link" href={full[i]} data-lightbox={gallery.id} data-alt={`${d.title}, frame ${i + 1}`} data-caption={`${d.title}, frame ${i + 1}`}>
+            <Image src={img.src} alt={`${d.title}, frame ${i + 1}`} widths={[480, 800, 1100]} sizes="(max-width: 599px) 60vw, (max-width: 999px) 45vw, 34vw" quality={80} loading={i < 4 ? 'eager' : 'lazy'} />
+          </a>
+          <figcaption class="enl__no code">{i + 1}</figcaption>
+        </figure>
+      ))}
+      {d.videos.map((v: any) => (
+        <figure class="enl enl--video" style="--ar: 1.7778">
+          <video controls playsinline preload="none" poster={v.poster || undefined} src={v.src}></video>
+          {v.caption && <figcaption class="enl__no code">{v.caption}</figcaption>}
+        </figure>
+      ))}
+    </div>
+  </div>
+
+  {next && next.id !== gallery.id && (
+    <p class="page next"><a class="go" href={`/photography/${next.id}`}>Next roll: {next.data.title} <Icons name="arrow" /></a></p>
+  )}
+  <Lightbox />
+</Layout>

@@ -1,12 +1,11 @@
 ---
-import { worldComponent } from '../../lib/world';
+import FilmPage from '@world/FilmPage.astro';
 import { filmPageProps } from '../../lib/pages';
 import { getFilms } from '../../lib/content';
 export async function getStaticPaths() {
   const films = await getFilms();
   return films.map((film) => ({ params: { slug: film.id }, props: { film } }));
 }
-const FilmPage = await worldComponent('FilmPage');
 const props = await filmPageProps(Astro.props.film);
 ---
 <FilmPage {...props} />

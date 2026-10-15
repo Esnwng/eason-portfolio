@@ -1,0 +1,31 @@
+---
+// A distant skyline silhouette, generated deterministically (no raster): rectangles, a few
+// antennas and a scatter of lit windows. Purely decorative.
+interface Props { seed?: number; class?: string; w?: number; h?: number; min?: number; max?: number; lights?: number }
+const { seed = 11, class: cls, w = 1600, h = 400, min = 0.22, max = 0.92, lights = 0.5 } = Astro.props;
+let s = seed;
+const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
+const mass: string[] = [];
+const dots: string[] = [];
+let x = 0;
+while (x < w) {
+  const bw = Math.round(16 + rnd() * 58);
+  const bh = Math.round(h * (min + rnd() * (max - min)));
+  const top = h - bh;
+  mass.push(`M${x} ${h}V${top}H${x + bw + 1}V${h}Z`); // +1 overlaps neighbours: no hairline seams when scaled
+  if (rnd() < 0.22) { const ax = x + Math.round(bw * (0.3 + rnd() * 0.4)); mass.push(`M${ax} ${top}V${top - Math.round(8 + rnd() * 34)}H${ax + 2}V${top}Z`); }
+  if (rnd() < 0.3) { const sw = Math.round(bw * 0.55); const sx = x + Math.round((bw - sw) / 2); mass.push(`M${sx} ${top}V${top - Math.round(6 + rnd() * 14)}H${sx + sw}V${top}Z`); }
+  if (rnd() < lights) {
+    for (let k = 0, n = Math.round(2 + rnd() * 6); k < n; k++) {
+      const dx = x + 4 + Math.round(rnd() * Math.max(1, bw - 10));
+      const dy = top + 8 + Math.round(rnd() * Math.max(1, bh - 20));
+      dots.push(`M${dx} ${dy}h3v4h-3Z`);
+    }
+  }
+  x += bw + (rnd() < 0.4 ? 0 : Math.round(rnd() * 5));
+}
+---
+<svg class={cls} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+  <path class="distant__mass" d={mass.join('')} />
+  <path class="distant__lights" d={dots.join('')} />
+</svg>

@@ -1,0 +1,59 @@
+---
+import Layout from './Layout.astro';
+import Print from './Print.astro';
+import Label from './Label.astro';
+import Alcove from './Alcove.astro';
+import SeriesRoom from './SeriesRoom.astro';
+import WallList from './WallList.astro';
+import { plural } from './hang';
+const { site, films, galleries, awards, press, exhibitions, heroImage, ogImage } = Astro.props;
+
+// The lit print on the title wall, and where it hangs in its series.
+const heroGallery = galleries.find((g: any) => g.images.some((i: any) => i.src.src === heroImage.src));
+const heroNo = heroGallery ? heroGallery.images.findIndex((i: any) => i.src.src === heroImage.src) + 1 : 0;
+const heroTitle = heroGallery ? `${heroGallery.data.title} ${heroNo}` : site.name;
+const nameLines = site.name.split(' ');
+// Rooms walk dense to quiet: three works, three, three, two, then one.
+const roomSizes = [3, 3, 3, 2, 1];
+const otherAwards = awards.filter((a: any) => !films.some((f: any) => f.id === a.data.work));
+---
+<Layout ogImage={ogImage} page="entrance">
+  <section class="room titlewall is-lit" aria-label={site.name}>
+    <div class="titlewall__name">
+      <h1 class="vinyl vinyl--name">{nameLines.map((l: string) => <span>{l}</span>)}</h1>
+      <p class="vinyl vinyl--small">{site.tagline}</p>
+    </div>
+    <div class="titlewall__print">
+      <Print class="work--hero" src={heroImage} alt={heroTitle} href={heroGallery ? `/photography/${heroGallery.id}` : undefined} label={heroGallery ? `${heroTitle}: enter the ${heroGallery.data.title} room` : undefined} sizes="(max-width: 960px) 92vw, 60vw" widths={[640, 960, 1280, 1600, 2000]} eager>
+        {heroGallery ? (
+          <Label title={heroGallery.data.title} series={heroGallery.data.location || undefined} year={heroGallery.data.year || undefined} count={`${heroNo} of ${heroGallery.count}`} />
+        ) : (
+          <Label title={site.name} />
+        )}
+      </Print>
+    </div>
+  </section>
+
+  {films.map((f: any, i: number) => <Alcove film={f} films={films} />)}
+  {otherAwards.length > 0 && <WallList title="Recognition" kind="awards" items={otherAwards} />}
+
+  {galleries.map((g: any, i: number) => <SeriesRoom gallery={g} index={i} size={roomSizes[i] ?? 2} exclude={g.id === heroGallery?.id ? heroImage.src : undefined} />)}
+
+  {exhibitions.length > 0 && <WallList title="Exhibitions" kind="exhibitions" items={exhibitions} />}
+  {press.length > 0 && <WallList title="Press" kind="press" items={press} />}
+
+  <section class="room quiet" aria-labelledby="about">
+    <h2 class="vinyl vinyl--room" id="about">About</h2>
+    <div class="walltext walltext--long">{site.about.map((p: string) => <p>{p}</p>)}</div>
+  </section>
+
+  <section class="room close" aria-labelledby="contact">
+    <h2 class="vinyl vinyl--room" id="contact">Contact</h2>
+    <div class="close__body">
+      {site.contact.email && <p class="close__line"><a href={`mailto:${site.contact.email}`}>{site.contact.email}</a></p>}
+      {site.contact.instagram && <p class="close__line"><a href={`https://instagram.com/${site.contact.instagram}`} rel="noopener">@{site.contact.instagram}</a></p>}
+      {!site.contact.email && !site.contact.instagram && site.contact.note && <p class="walltext">{site.contact.note}</p>}
+      <p class="close__cv"><a class="vinyl vinyl--small" href="/cv">Take the CV handout</a></p>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,17 @@
+---
+// A horizontal strip of frames cut from one roll. `leader` fills the rest of the strip with unexposed film.
+import Frame from './Frame.astro';
+import type { ImageMetadata } from 'astro';
+type Item = { href: string; src: ImageMetadata; alt: string; no: number | string; tick?: boolean; letterbox?: boolean; id?: string };
+interface Props { id: string; code: string; items: Item[]; leader?: boolean; eager?: boolean }
+const { id, code, items, leader = false, eager = false } = Astro.props;
+---
+<section class="strip" aria-labelledby={id}>
+  <h2 class="strip__code code" id={id}>{code}</h2>
+  <ol class="reel reel--strip">
+    {items.map((it) => <Frame {...it} eager={eager} />)}
+    {leader && (
+      <li class="fb leader" aria-hidden="true" data-from={items.length + 1} style={`grid-column: ${items.length + 1} / -1; --perfs: calc(8 * (var(--n) - ${items.length}))`}></li>
+    )}
+  </ol>
+</section>

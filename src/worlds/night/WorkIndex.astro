@@ -1,0 +1,14 @@
+---
+import Layout from './Layout.astro';
+import FilmTower from './FilmTower.astro';
+const { films } = Astro.props;
+---
+<Layout title="Work" description="Film work by Eason Wang, cinematographer." sky="night">
+  <div class="wrap n-head">
+    <h1 class="h-street">Film</h1>
+    <p class="n-meta">{films.length} {films.length === 1 ? 'film' : 'films'}</p>
+  </div>
+  <div class="wrap" style="padding-bottom: clamp(64px, 8vw, 110px)">
+    {films.map((f: any, i: number) => <FilmTower film={f} eager={i === 0} />)}
+  </div>
+</Layout>

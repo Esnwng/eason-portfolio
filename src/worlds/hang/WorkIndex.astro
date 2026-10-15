@@ -1,0 +1,11 @@
+---
+import Layout from './Layout.astro';
+import Alcove from './Alcove.astro';
+const { site, films } = Astro.props;
+---
+<Layout title="Film" description={`Film work by ${site.name}, ${site.tagline.toLowerCase()}.`} page="film">
+  <header class="room roomhead is-lit">
+    <h1 class="vinyl vinyl--wall">Film</h1>
+  </header>
+  {films.map((f: any, i: number) => <Alcove film={f} films={films} eager={i === 0} />)}
+</Layout>

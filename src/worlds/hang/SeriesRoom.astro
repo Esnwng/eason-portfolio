@@ -1,0 +1,36 @@
+---
+// A room of the hang for one photo series: a vinyl room title, a wall text,
+// the series label, and a few prints hung at varied scale on one eye-line.
+import Print from './Print.astro';
+import Label from './Label.astro';
+import { composeWall, aspect, sizesFor, plural } from './hang';
+import type { Gallery } from '../../lib/content';
+interface Props { gallery: Gallery; index: number; size: number; exclude?: string; level?: 2 | 3 }
+const { gallery, index, size, exclude, level = 2 } = Astro.props;
+const H = level === 2 ? 'h2' : 'h3';
+const href = `/photography/${gallery.id}`;
+const pool = gallery.images.filter((i) => i.src.src !== exclude);
+const leadImg = pool.find((i) => i.src.src === gallery.cover?.src) ?? pool[0];
+const rest = pool.filter((i) => i !== leadImg);
+// Spread the supporting picks across the series rather than taking neighbours.
+const picks = Array.from({ length: Math.max(0, Math.min(size, pool.length) - 1) }, (_, k) => rest[Math.floor(((k + 1) * rest.length) / Math.min(size, pool.length))] ?? rest[k]).filter(Boolean);
+const items = leadImg ? [leadImg, ...picks] : [];
+const hung = composeWall(items, (i) => aspect(i.src), 0, index);
+const n = (file: string) => gallery.images.findIndex((i) => i.file === file) + 1;
+const flip = index % 2 === 1;
+---
+<section class:list={['room', 'series', { 'series--flip': flip, 'series--quiet': hung.length === 1 }]} aria-labelledby={`room-${gallery.id}`}>
+  <div class="series__text">
+    <H class="vinyl vinyl--room" id={`room-${gallery.id}`}><a href={href}>{gallery.data.title}</a></H>
+    {gallery.data.description && <p class="walltext">{gallery.data.description}</p>}
+  </div>
+  <div class="hang">
+    {hung.map((h) => h.lead ? (
+      <Print src={h.item.src} alt={`${gallery.data.title} ${n(h.item.file)}`} href={href} w={h.w} wm={h.wm} side={h.side} sizes={sizesFor(h.w, h.wm)} widths={[480, 800, 1200, 1600]}>
+        <Label title={gallery.data.title} series={gallery.data.location || undefined} year={gallery.data.year || undefined} count={plural(gallery.count, 'work')} href={href} action="Enter the room" />
+      </Print>
+    ) : (
+      <Print src={h.item.src} alt={`${gallery.data.title} ${n(h.item.file)}`} href={href} w={h.w} wm={h.wm} side={h.side} sizes={sizesFor(h.w, h.wm)} widths={[480, 800, 1200, 1600]} />
+    ))}
+  </div>
+</section>

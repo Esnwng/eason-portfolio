@@ -1,0 +1,66 @@
+---
+import Layout from './Layout.astro';
+import YouTube from '../../components/YouTube.astro';
+import Icons from '../../components/Icons.astro';
+import Mark from './Mark.astro';
+import { Image } from 'astro:assets';
+import { formatDate } from '../../lib/content';
+const { film, awards, ogImage } = Astro.props;
+const d = film.data;
+const lead = awards.find((a: any) => a.data.image) ?? awards[0];
+---
+<Layout title={d.title} description={d.logline || `${d.title} (${d.year}). ${d.role}: Eason Wang.`} ogImage={ogImage}>
+  <div class="page head head--tight">
+    <a class="backlink code" href="/work"><Icons name="arrow" /> Work</a>
+    <h1 class="display title">{d.title}</h1>
+    <p class="code head__meta">{[d.role, d.year, d.runtime].filter(Boolean).join(' · ')}</p>
+  </div>
+
+  <div class="pulled">
+    <div class="pulled__film">
+      <p class="pulled__code code" aria-hidden="true"><span>1</span><span>{d.title}</span><span>{d.year}</span></p>
+      {d.youtubeId
+        ? <YouTube id={d.youtubeId} poster={d.poster} title={d.title} />
+        : <Image src={d.poster} alt={`${d.title}, film still`} widths={[800, 1400, 2000]} sizes="(max-width: 1280px) 100vw, 1280px" loading="eager" />}
+    </div>
+    {lead && <p class="note note--pulled">{lead.data.title} {lead.data.date.slice(0, 4)} <Mark kind="tick" delay={500} /></p>}
+  </div>
+
+  <div class="page screening">
+    <div class="screening__text">
+      {d.logline && <p class="lead">{d.logline}</p>}
+      <div class="copy">{d.description.map((p: string) => <p>{p}</p>)}</div>
+    </div>
+    <div class="screening__facts">
+      {d.credits.length > 0 && (
+        <dl class="credits">
+          {d.credits.map((c: any) => <div><dt class="code">{c.label}</dt><dd>{c.value}</dd></div>)}
+        </dl>
+      )}
+      {awards.length > 0 && (
+        <div class="record">
+          <h2 class="h3">Festivals</h2>
+          <ul class="record__list">
+            {awards.map((a: any) => (
+              <li>
+                <span class="code record__date">{formatDate(a.data.date)}</span>
+                <span>{a.data.url ? <a href={a.data.url} rel="noopener">{a.data.title}</a> : a.data.title}{a.data.category ? `, ${a.data.category}` : ''}. {a.data.festival}{a.data.location ? `, ${a.data.location}` : ''}.</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  </div>
+
+  {awards.some((a: any) => a.data.image) && (
+    <div class="page certificates">
+      {awards.filter((a: any) => a.data.image).map((a: any) => (
+        <figure class="certificate">
+          <span class="select__print"><Image src={a.data.image} alt={`Certificate: ${a.data.title}, ${a.data.festival}`} widths={[640, 1000, 1400]} sizes="(max-width: 760px) 92vw, 640px" quality={82} /></span>
+          <figcaption class="code">{a.data.title}{a.data.category ? ` · ${a.data.category}` : ''} · {formatDate(a.data.date)}</figcaption>
+        </figure>
+      ))}
+    </div>
+  )}
+</Layout>

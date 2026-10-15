@@ -1,0 +1,69 @@
+---
+// Dawn: the CV as a silver notice, dense and printable.
+import Layout from './Layout.astro';
+import { formatDate } from '../../lib/content';
+import { countLabel } from './skyline';
+const { site, films, awards, exhibitions, press, galleries } = Astro.props;
+const filmTitle = (id: string) => films.find((f: any) => f.id === id)?.data.title ?? id;
+---
+<Layout title="CV" description={`Curriculum vitae of ${site.name}: filmography, festivals and photography.`} sky="dawn">
+  <div class="wrap n-head cv-head">
+    <h1 class="h-street">{site.name}</h1>
+    <p class="n-meta">Curriculum vitae · {site.roles.join(' · ')}</p>
+    <p class="n-lede">{site.about[0]}</p>
+    <p class="cv-actions n-noprint"><button class="plate btn-plate" type="button" onclick="window.print()">Print or save as PDF</button></p>
+  </div>
+  <div class="wrap">
+    <div class="notice">
+      {films.length > 0 && (
+        <section>
+          <h2>Filmography</h2>
+          <div class="table-scroll"><table>
+            <thead><tr><th scope="col">Year</th><th scope="col">Title</th><th scope="col">Role</th><th scope="col">Notes</th></tr></thead>
+            <tbody>{films.map((f: any) => <tr><td class="num">{f.data.year}</td><td><a href={`/work/${f.id}`}>{f.data.title}</a></td><td>{f.data.role}</td><td>{f.data.logline}</td></tr>)}</tbody>
+          </table></div>
+        </section>
+      )}
+      {awards.length > 0 && (
+        <section>
+          <h2>Festivals & Awards</h2>
+          <div class="table-scroll"><table>
+            <thead><tr><th scope="col">Date</th><th scope="col">Award</th><th scope="col">Festival</th><th scope="col">Work</th></tr></thead>
+            <tbody>{awards.map((a: any) => <tr><td class="num">{formatDate(a.data.date)}</td><td>{a.data.title}{a.data.category ? `, ${a.data.category}` : ''}</td><td>{a.data.url ? <a href={a.data.url}>{a.data.festival}</a> : a.data.festival}{a.data.location ? `, ${a.data.location}` : ''}</td><td>{a.data.work ? filmTitle(a.data.work) : ''}{a.data.role ? ` (${a.data.role})` : ''}</td></tr>)}</tbody>
+          </table></div>
+        </section>
+      )}
+      {exhibitions.length > 0 && (
+        <section>
+          <h2>Exhibitions</h2>
+          <div class="table-scroll"><table>
+            <thead><tr><th scope="col">Date</th><th scope="col">Exhibition</th><th scope="col">Venue</th><th scope="col">Role</th></tr></thead>
+            <tbody>{exhibitions.map((x: any) => <tr><td class="num">{formatDate(x.data.date)}</td><td>{x.data.url ? <a href={x.data.url}>{x.data.title}</a> : x.data.title}</td><td>{x.data.venue}{x.data.location ? `, ${x.data.location}` : ''}</td><td>{x.data.role}</td></tr>)}</tbody>
+          </table></div>
+        </section>
+      )}
+      {press.length > 0 && (
+        <section>
+          <h2>Press</h2>
+          <div class="table-scroll"><table>
+            <thead><tr><th scope="col">Date</th><th scope="col">Headline</th><th scope="col">Outlet</th></tr></thead>
+            <tbody>{press.map((p: any) => <tr><td class="num">{formatDate(p.data.date)}</td><td>{p.data.url ? <a href={p.data.url}>{p.data.title}</a> : p.data.title}</td><td>{p.data.outlet}</td></tr>)}</tbody>
+          </table></div>
+        </section>
+      )}
+      {galleries.length > 0 && (
+        <section>
+          <h2>Photography Series</h2>
+          <div class="table-scroll"><table>
+            <thead><tr><th scope="col">Series</th><th scope="col">Location</th><th scope="col">Year</th><th scope="col">Work</th></tr></thead>
+            <tbody>{galleries.map((g: any) => <tr><td><a href={`/photography/${g.id}`}>{g.data.title}</a></td><td>{g.data.location}</td><td class="num">{g.data.year}</td><td class="num">{countLabel(g)}</td></tr>)}</tbody>
+          </table></div>
+        </section>
+      )}
+      <section>
+        <h2>Contact</h2>
+        <p style="margin-top:10px">{site.contact.email ? <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a> : site.contact.note}{site.contact.instagram && <> · <a href={`https://instagram.com/${site.contact.instagram}`}>@{site.contact.instagram}</a></>}</p>
+      </section>
+    </div>
+  </div>
+</Layout>

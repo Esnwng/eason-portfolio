@@ -1,7 +1,6 @@
 ---
-import { worldComponent } from '../../lib/world';
+import PhotoIndex from '@world/PhotoIndex.astro';
 import { photoIndexProps } from '../../lib/pages';
-const PhotoIndex = await worldComponent('PhotoIndex');
 const props = await photoIndexProps();
 ---
 <PhotoIndex {...props} />

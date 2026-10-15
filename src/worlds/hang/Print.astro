@@ -1,0 +1,37 @@
+---
+// One hung work: a print in a thin mat with a real drop shadow, a spot pool
+// behind it on the wall, and an optional card-stock label beneath.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  href?: string;
+  label?: string; // accessible name for the link when it differs from the alt
+  w?: number; // width in cqw of the hang (desktop)
+  wm?: number; // width in % of the hang (mobile)
+  side?: 'start' | 'end' | 'center';
+  sizes: string;
+  widths?: number[];
+  eager?: boolean;
+  lightbox?: string;
+  caption?: string;
+  class?: string;
+}
+const { src, alt, href, label, w = 50, wm = 100, side = 'center', sizes, widths = [480, 800, 1200, 1600, 2000], eager = false, lightbox, caption, class: cls } = Astro.props;
+const ar = (src.width / src.height).toFixed(4);
+const hasLabel = Astro.slots.has('default');
+const Tag = hasLabel ? 'figure' : 'div';
+---
+<Tag class:list={['work', cls]} style={`--ar:${ar};--w:${w};--wm:${wm};--side:${side}`}>
+  {href ? (
+    <a class="work__frame" href={href} data-lightbox={lightbox} data-alt={lightbox ? alt : undefined} data-caption={caption} aria-label={label}>
+      <Image src={src} alt={alt} widths={widths} sizes={sizes} quality={82} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : undefined} />
+    </a>
+  ) : (
+    <div class="work__frame">
+      <Image src={src} alt={alt} widths={widths} sizes={sizes} quality={82} loading={eager ? 'eager' : 'lazy'} />
+    </div>
+  )}
+  {hasLabel && <figcaption class="work__label"><slot /></figcaption>}
+</Tag>

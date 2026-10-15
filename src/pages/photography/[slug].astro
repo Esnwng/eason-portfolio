@@ -1,12 +1,11 @@
 ---
-import { worldComponent } from '../../lib/world';
+import GalleryPage from '@world/GalleryPage.astro';
 import { galleryPageProps } from '../../lib/pages';
 import { getGalleries } from '../../lib/content';
 export async function getStaticPaths() {
   const galleries = await getGalleries();
   return galleries.map((gallery, idx) => ({ params: { slug: gallery.id }, props: { gallery, next: galleries[(idx + 1) % galleries.length] } }));
 }
-const GalleryPage = await worldComponent('GalleryPage');
 const props = await galleryPageProps(Astro.props.gallery, Astro.props.next);
 ---
 <GalleryPage {...props} />

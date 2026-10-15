@@ -1,0 +1,15 @@
+---
+// Navigation as street signs.
+const path = Astro.url.pathname.replace(/\.html$/, '');
+const links = [
+  { href: '/work', label: 'Work' },
+  { href: '/photography', label: 'Photography' },
+  { href: '/cv', label: 'CV' },
+];
+const current = (href: string) => path === href || path.startsWith(href + '/');
+---
+<nav class="streetnav" aria-label="Primary">
+  <ul>
+    {links.map((l) => <li><a class="plate" href={l.href} aria-current={current(l.href) ? 'page' : undefined}>{l.label}</a></li>)}
+  </ul>
+</nav>

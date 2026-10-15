@@ -1,0 +1,15 @@
+---
+import Layout from './Layout.astro';
+import SeriesBlock from './SeriesBlock.astro';
+const { galleries } = Astro.props;
+const total = galleries.reduce((t: number, g: any) => t + g.images.length, 0);
+---
+<Layout title="Photography" description={`Still photography by Eason Wang: ${galleries.map((g: any) => g.data.title).join(', ')}.`} sky="night">
+  <div class="wrap n-head">
+    <h1 class="h-street">Photography</h1>
+    <p class="n-meta">{galleries.length} series · {total} images</p>
+  </div>
+  <div class="wrap canyon-page">
+    {galleries.map((g: any, i: number) => <SeriesBlock gallery={g} index={i} max={4} level="h2" describe />)}
+  </div>
+</Layout>

@@ -1,0 +1,16 @@
+---
+// Card-stock museum label. One measured scale: title / series / year / medium / count.
+interface Props { title: string; series?: string; year?: string | number; medium?: string; count?: string; dot?: boolean; href?: string; action?: string }
+const { title, series, year, medium, count, dot = false, href, action } = Astro.props;
+---
+<div class="label">
+  <p class="label__title">
+    {dot && <span class="label__dot" title="Awarded"><span class="sr-only">Awarded work: </span></span>}
+    <span>{title}</span>
+  </p>
+  {series && <p class="label__series">{series}</p>}
+  {(year || medium) && <p class="label__meta">{[year, medium].filter(Boolean).join(', ')}</p>}
+  {count && <p class="label__count">{count}</p>}
+  <slot />
+  {href && action && <a class="label__action" href={href}>{action}</a>}
+</div>

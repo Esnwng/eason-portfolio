@@ -1,0 +1,22 @@
+---
+// One frame of a 35 mm strip: its own slice of film base, sprocket holes (CSS mask) above and below,
+// the frame number on the edge, and the picture. Hover / focus lights it as on a light table.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Mark from './Mark.astro';
+interface Props {
+  href: string; src: ImageMetadata; alt: string; no: number | string;
+  tick?: boolean; letterbox?: boolean; eager?: boolean; sizes?: string; id?: string;
+}
+const { href, src, alt, no, tick = false, letterbox = false, eager = false, id,
+  sizes = '(max-width: 599px) 25vw, (max-width: 999px) 20vw, 15vw' } = Astro.props;
+---
+<li class="cell" id={id}>
+  <a class:list={['fb', 'frame', { 'frame--scope': letterbox }]} href={href}>
+    <span class="frame__no code" aria-hidden="true">{no}</span>
+    <span class="frame__pic">
+      <Image src={src} alt={alt} widths={[240, 480]} sizes={sizes} quality={76} loading={eager ? 'eager' : 'lazy'} />
+    </span>
+    {tick && <Mark kind="tick" class="frame__tick" delay={1400} />}
+  </a>
+</li>

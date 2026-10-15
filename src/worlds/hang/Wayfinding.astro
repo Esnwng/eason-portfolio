@@ -1,0 +1,16 @@
+---
+// A small vinyl strip lettered on the wall, not a header bar.
+const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
+const stops = [
+  { href: '/', label: 'Entrance' },
+  { href: '/work', label: 'Film' },
+  { href: '/photography', label: 'Photography' },
+  { href: '/cv', label: 'CV' },
+];
+const here = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(href + '/'));
+---
+<nav class="way" aria-label="Wayfinding">
+  <ul>
+    {stops.map((s) => <li><a href={s.href} aria-current={here(s.href) ? (path === s.href ? 'page' : 'location') : undefined}>{s.label}</a></li>)}
+  </ul>
+</nav>

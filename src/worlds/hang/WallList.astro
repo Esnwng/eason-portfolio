@@ -1,0 +1,28 @@
+---
+// Vinyl wall text listing for awards not tied to a film, exhibitions and press.
+// The caller renders it only when there are entries.
+import { formatDate } from '../../lib/content';
+interface Props { title: string; kind: 'awards' | 'exhibitions' | 'press'; items: any[] }
+const { title, kind, items } = Astro.props;
+const id = `wall-${kind}`;
+const line = (x: any) =>
+  kind === 'awards' ? [x.data.category, x.data.festival, x.data.location].filter(Boolean).join(', ')
+  : kind === 'exhibitions' ? [x.data.venue, x.data.location, x.data.role].filter(Boolean).join(', ')
+  : x.data.outlet;
+---
+{items.length > 0 && (
+  <section class="room walllist" aria-labelledby={id}>
+    <h2 class="vinyl vinyl--room" id={id}>{title}</h2>
+    <ul class="awards" role="list">
+      {items.map((x: any) => (
+        <li class="award">
+          <h3 class="award__title">{x.data.url ? <a href={x.data.url} rel="noopener">{x.data.title}</a> : x.data.title}</h3>
+          <p class="award__line">{line(x)}</p>
+          <p class="award__meta">{formatDate(x.data.date)}</p>
+          {kind === 'press' && x.data.excerpt && <p class="award__line">{x.data.excerpt}</p>}
+          {kind === 'exhibitions' && x.data.description && <p class="award__line">{x.data.description}</p>}
+        </li>
+      ))}
+    </ul>
+  </section>
+)}

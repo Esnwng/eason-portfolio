@@ -17,7 +17,7 @@ const { film, awards, ogImage } = Astro.props;
   <div class="container about section">
     <div data-reveal>
       {film.data.credits.length > 0 && (
-        <dl style="margin:0; display:grid; gap:14px">{film.data.credits.map((c) => <div><dt class="meta">{c.label}</dt><dd style="margin:4px 0 0; font-family:var(--font-display); font-size:22px">{c.value}</dd></div>)}</dl>
+        <dl style="margin:0; display:grid; gap:14px">{film.data.credits.map((c) => <div><dt class="meta">{c.label}</dt><dd style="margin:4px 0 0; font-family:var(--font-display); font-size:20px; font-weight:500">{c.value}</dd></div>)}</dl>
       )}
       {awards.length > 0 && (
         <div style="margin-top:32px">

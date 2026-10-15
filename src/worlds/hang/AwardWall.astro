@@ -1,0 +1,25 @@
+---
+// The award as vinyl wall text. Rendered only when there are awards.
+import { formatDate } from '../../lib/content';
+interface Props { awards: any[]; films?: any[]; level?: 2 | 3; class?: string }
+const { awards, films = [], level = 3, class: cls } = Astro.props;
+const H = level === 2 ? 'h2' : 'h3';
+const workTitle = (id: string) => films.find((f: any) => f.id === id)?.data.title ?? '';
+---
+{awards.length > 0 && (
+  <ul class:list={['awards', cls]} role="list">
+    {awards.map((a: any) => (
+      <li class="award">
+        <H class="award__title">{a.data.title}</H>
+        <p class="award__line">
+          {[a.data.category, a.data.url ? null : a.data.festival].filter(Boolean).join(', ')}
+          {a.data.url && <Fragment>{a.data.category ? ', ' : ''}<a href={a.data.url} rel="noopener">{a.data.festival}</a></Fragment>}
+        </p>
+        <p class="award__meta">{[a.data.location, formatDate(a.data.date)].filter(Boolean).join(' · ')}</p>
+        {a.data.work && workTitle(a.data.work) && (
+          <p class="award__work">{workTitle(a.data.work)}{a.data.role ? ` · ${a.data.role}` : ''}</p>
+        )}
+      </li>
+    ))}
+  </ul>
+)}

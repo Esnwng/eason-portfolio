@@ -1,0 +1,34 @@
+---
+// A film as one tall lit window: beacon on the roof, the window, its label, and the street below.
+import { Image } from 'astro:assets';
+import Beacon from './Beacon.astro';
+import type { FilmWithAwards } from '../../lib/pages';
+interface Props { film: FilmWithAwards; eager?: boolean }
+const { film, eager = false } = Astro.props;
+const r = film.data.poster.width / film.data.poster.height;
+const sizes = '(max-width: 1100px) 100vw, 1040px';
+const meta = [film.data.role, film.data.year, film.data.runtime].filter(Boolean).join(' · ');
+---
+<article class="film-street">
+  <div class="film-tower">
+    <div class="tower__roof"><Beacon awards={film.awards} /></div>
+    <div class="tower__body">
+      <span class="marquee">Now screening</span>
+      <a class="win win--lit" href={`/work/${film.id}`} style={`--r:${r.toFixed(4)}`}>
+        <span class="win__glass"><Image src={film.data.poster} alt={`${film.data.title}: still from the film`} widths={[640, 1040, 1600, 2080]} sizes={sizes} quality={84} loading={eager ? 'eager' : 'lazy'} /></span>
+        <span class="win__label">
+          <span class="win__title">{film.data.title}</span>
+          <span class="win__meta">{meta}</span>
+        </span>
+      </a>
+      {film.data.logline && <p class="film-tower__logline">{film.data.logline}</p>}
+    </div>
+  </div>
+  <div class="street" aria-hidden="true" data-weather>
+    <div class="water">
+      <span class="smear smear--screen"></span>
+      <div class="mirror" style={`--r:${r.toFixed(4)}`}><span class="win__glass"><Image src={film.data.poster} alt="" widths={[640, 1040, 1600, 2080]} sizes={sizes} quality={84} loading={eager ? 'eager' : 'lazy'} /></span></div>
+    </div>
+    <div class="rain"></div>
+  </div>
+</article>

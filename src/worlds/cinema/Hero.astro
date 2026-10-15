@@ -12,7 +12,7 @@ const { image, name, tagline, roles } = Astro.props;
       <div class="hero__line"><h1 class="hero__name" style="--i:0">{name}</h1></div>
       <div class="hero__line"><p class="hero__tag" style="--i:1">{tagline}</p></div>
       <div class="hero__line"><p class="hero__roles meta" style="--i:2">
-        {roles.map((r, i) => <Fragment>{i > 0 && <span class="dot"></span>}<span>{r}</span></Fragment>)}
+        {roles.map((r, i) => <Fragment>{i > 0 && <span aria-hidden="true">/</span>}<span>{r}</span></Fragment>)}
       </p></div>
     </div>
   </div>

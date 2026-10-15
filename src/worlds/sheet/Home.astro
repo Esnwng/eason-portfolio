@@ -1,0 +1,106 @@
+---
+import Layout from './Layout.astro';
+import Strip from './Strip.astro';
+import Mark from './Mark.astro';
+import { Image } from 'astro:assets';
+import { formatDate } from '../../lib/content';
+
+const { site, films, galleries, awards, heroImage, ogImage } = Astro.props;
+const N = 7; // frames per strip at full width; CSS shows fewer on narrow screens
+
+const film = films[0];
+const filmAward = film ? (film.awards.find((a: any) => a.data.image) ?? film.awards[0]) : undefined;
+const awardLine = filmAward ? `${filmAward.data.title} ${filmAward.data.date.slice(0, 4)}` : '';
+
+const heroGallery = galleries.find((g: any) => g.id === site.hero.gallery);
+const heroIdx = heroGallery ? heroGallery.images.findIndex((i: any) => i.file === site.hero.file) : -1;
+const heroHref = heroGallery && heroIdx >= 0 ? `/photography/${heroGallery.id}#f-${heroIdx + 1}` : '/photography';
+const heroAlt = heroGallery && heroIdx >= 0 ? `${heroGallery.data.title}, frame ${heroIdx + 1}` : `${site.name}, photograph`;
+
+const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
+
+const strips: { id: string; code: string; items: any[]; leader?: boolean }[] = [];
+if (films.length) {
+  strips.push({
+    id: 'strip-film',
+    code: films.length === 1
+      ? ['Film', film.data.title, film.data.year, film.data.role].join(' · ')
+      : ['Film', ...films.map((f: any) => f.data.title)].join(' · '),
+    leader: films.length < N,
+    items: films.slice(0, N).map((f: any, i: number) => ({
+      href: `/work/${f.id}`, src: f.data.poster, alt: `${f.data.title}, film still`, no: i + 1, letterbox: true, tick: i === 0,
+    })),
+  });
+}
+for (const g of galleries) {
+  const isHero = g.id === heroGallery?.id && heroIdx >= 0;
+  const start = isHero ? Math.max(0, heroIdx - 2) : 0;
+  const frames = [g.data.title, g.data.location, g.data.year, plural(g.images.length, 'frame', 'frames'), g.data.videos.length ? plural(g.data.videos.length, 'clip', 'clips') : ''];
+  strips.push({
+    id: `strip-${g.id}`,
+    leader: Math.min(g.images.length - start, N) < N,
+    code: frames.filter(Boolean).join(' · '),
+    items: g.images.slice(start, start + N).map((img: any, k: number) => {
+      const no = start + k + 1;
+      return { href: `/photography/${g.id}#f-${no}`, src: img.src, alt: `${g.data.title}, frame ${no}`, no, tick: isHero && start + k === heroIdx };
+    }),
+  });
+}
+const top = strips.slice(0, 4);
+const rest = strips.slice(4);
+const { email, instagram, note } = site.contact;
+---
+<Layout ogImage={ogImage} home>
+  <div class="sheet sheet--home">
+    {top.map((s) => <Strip {...s} />)}
+
+    <div class="selects">
+      {film && (
+        <a class="select select--film" href={`/work/${film.id}`}>
+          <span class="select__print">
+            <Image src={film.data.poster} alt={`${film.data.title}, film still`} widths={[640, 960, 1280]} sizes="(max-width: 999px) 86vw, 44vw" quality={82} loading="eager" fetchpriority="high" />
+            <Mark kind="loop-wide" delay={150} />
+          </span>
+          <span class="note note--screen">screening <Mark kind="arrow" delay={900} /></span>
+          {awardLine && <span class="note note--award">{awardLine}</span>}
+        </a>
+      )}
+      <a class="select select--hero" href={heroHref}>
+        <span class="select__print">
+          <Image src={heroImage} alt={heroAlt} widths={[640, 960, 1320]} sizes="(max-width: 999px) 74vw, 46vw" quality={82} loading="eager" />
+        </span>
+        <Mark kind="loop" delay={700} />
+      </a>
+    </div>
+
+    {rest.map((s) => <Strip {...s} />)}
+  </div>
+
+  <section class="page colophon" aria-labelledby="about-title">
+    <div class="colophon__side">
+      <h2 class="display h2" id="about-title">About</h2>
+      <p class="code colophon__roles">{site.roles.join(' · ')}</p>
+      <p class="colophon__contact">
+        {email ? <a href={`mailto:${email}`}>{email}</a> : note}
+        {instagram && <><br /><a href={`https://instagram.com/${instagram}`} rel="noopener">@{instagram}</a></>}
+      </p>
+    </div>
+    <div class="colophon__body">
+      <div class="copy">{site.about.map((p: string) => <p>{p}</p>)}</div>
+      {awards.length > 0 && (
+        <div class="record">
+          <h3 class="h3">Festival record</h3>
+          <ul class="record__list">
+            {awards.map((a: any) => (
+              <li>
+                <span class="code record__date">{formatDate(a.data.date)}</span>
+                <span>{a.data.title}{a.data.category ? `, ${a.data.category}` : ''}. {a.data.festival}{a.data.location ? `, ${a.data.location}` : ''}.</span>
+              </li>
+            ))}
+          </ul>
+          <p class="record__more"><a href="/cv">The full CV</a></p>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>

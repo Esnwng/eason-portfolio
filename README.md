@@ -31,7 +31,24 @@ Images in `src/content` are web-sized (≤2400 px, ~15 MB total). Originals and 
 
 ## Deploy (Vercel)
 
-Import the GitHub repository in Vercel. It auto-detects Astro:
+Live (personal Vercel scope, Hobby plan, static):
+
+| World | URL |
+|---|---|
+| cinema | https://eason-wang.vercel.app |
+| hang | https://eason-wang-gallery.vercel.app |
+| night | https://eason-wang-night.vercel.app |
+
+Redeploy after any content change (needs `vercel login` once):
+
+```bash
+scripts/deploy-worlds.sh            # all three
+scripts/deploy-worlds.sh hang       # one world
+```
+
+Each world builds with `PUBLIC_WORLD` and `PUBLIC_SITE_URL`, is copied to `deploy/<project>/` with a `vercel.json` (`cleanUrls`), and pushed with `vercel deploy --prod`.
+
+Alternative, once the repo is on GitHub: import it in Vercel and it auto-detects Astro (set `PUBLIC_WORLD` and `PUBLIC_SITE_URL` as project env vars):
 
 - Framework preset: **Astro**
 - Install command: `pnpm install`

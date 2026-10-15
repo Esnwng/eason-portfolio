@@ -1,0 +1,39 @@
+---
+// A band of towers, each holding one lit window. Rendered twice on the home page:
+// once as the skyline, once flipped as its reflection in the wet street (mirror).
+import { Image } from 'astro:assets';
+import Beacon from './Beacon.astro';
+import type { Slot } from './skyline';
+interface Props { slots: Slot[]; mirror?: boolean }
+const { slots, mirror = false } = Astro.props;
+const cols = slots.map((s) => `minmax(0, ${s.fr.toFixed(3)}fr)`).join(' ');
+const sizesFor = (s: Slot) => {
+  const total = slots.reduce((t, x) => t + x.fr, 0);
+  const vw = Math.ceil((s.fr / total) * 100);
+  return `(max-width: 720px) ${s.spanM === 6 ? 100 : s.spanM === 3 ? 50 : 34}vw, ${vw + 2}vw`;
+};
+const Tag = mirror ? 'div' : 'ul';
+const Item = mirror ? 'div' : 'li';
+---
+<Tag class:list={['band', mirror && 'mirror']} style={`--cols:${cols}`} aria-label={mirror ? undefined : 'Selected work'} aria-hidden={mirror ? 'true' : undefined}>
+  {slots.map((s) => {
+    const W = mirror ? 'span' : 'a';
+    return (
+      <Item class:list={['tower', s.film && 'tower--film']} data-roof={s.roof} style={`--r:${s.r.toFixed(4)};--rm:${s.rm.toFixed(4)};--rise:${s.rise}px;--span-m:${s.spanM}`}>
+        <div class="tower__roof">{s.film && <Beacon awards={s.film.awards} mirror={mirror} />}{s.roof === 'antenna' && <span class="tower__lamp"></span>}</div>
+        <div class="tower__body">
+          {s.film && <span class="marquee">Now screening</span>}
+          <W class:list={['win', s.film && 'win--lit']} href={mirror ? undefined : s.href}>
+            <span class="win__glass">
+              <Image src={s.src} alt={mirror ? '' : s.alt} widths={[360, 560, 820, 1200]} sizes={sizesFor(s)} quality={s.film ? 84 : 80} loading="eager" fetchpriority={s.film && !mirror ? 'high' : undefined} />
+            </span>
+            <span class="win__label">
+              <span class="win__title">{s.title}</span>
+              <span class="win__meta">{s.meta}</span>
+            </span>
+          </W>
+        </div>
+      </Item>
+    );
+  })}
+</Tag>

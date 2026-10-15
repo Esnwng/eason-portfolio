@@ -17,3 +17,4 @@ pnpm-debug.log*
 .impeccable/mocks/
 .impeccable/live/
 .impeccable/questions/
+deploy/

@@ -1,0 +1,71 @@
+---
+import Layout from './Layout.astro';
+import YouTube from '../../components/YouTube.astro';
+import Icons from '../../components/Icons.astro';
+import Beacon from './Beacon.astro';
+import { Image } from 'astro:assets';
+import { formatDate } from '../../lib/content';
+const { film, awards, ogImage } = Astro.props;
+const meta = [film.data.role, film.data.year, film.data.runtime].filter(Boolean).join(' · ');
+---
+<Layout title={film.data.title} description={film.data.logline || `${film.data.title} (${film.data.year}) — ${film.data.role}: Eason Wang.`} ogImage={ogImage} sky="night">
+  <div class="wrap n-head">
+    <a class="plate plate--back n-back" href="/work"><Icons name="arrow" /> All work</a>
+    <h1 class="h-street">{film.data.title}</h1>
+    <p class="n-meta">{meta}</p>
+    {film.data.logline && <p class="n-lede">{film.data.logline}</p>}
+  </div>
+
+  <section class="wrap screening" aria-label="Screening">
+    <div class="film-tower">
+      <div class="tower__roof"><Beacon awards={awards} /></div>
+      <div class="tower__body">
+        <span class="marquee">Now screening</span>
+        <div class="win win--lit" id="screen">
+          <div class="win__glass">
+            {film.data.youtubeId
+              ? <YouTube id={film.data.youtubeId} poster={film.data.poster} title={film.data.title} />
+              : <Image src={film.data.poster} alt={`${film.data.title} still`} widths={[800, 1400, 2000]} sizes="(max-width: 1280px) 100vw, 1280px" loading="eager" quality={82} />}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="street" aria-hidden="true" data-weather>
+      <div class="water">
+        <span class="smear smear--screen"></span>
+        <div class="mirror"><span class="win__glass" style="aspect-ratio:16/9"><Image src={film.data.poster} alt="" widths={[800, 1400, 2000]} sizes="(max-width: 1280px) 100vw, 1280px" loading="eager" quality={82} /></span></div>
+      </div>
+      <div class="rain"></div>
+    </div>
+  </section>
+
+  <div class="wrap film-notice">
+    <div>
+      {film.data.credits.length > 0 && (
+        <dl class="credits">{film.data.credits.map((c: any) => <div><dt>{c.label}</dt><dd>{c.value}</dd></div>)}</dl>
+      )}
+      {awards.length > 0 && (
+        <>
+          <h2 class="sub-h" style="margin-top:40px">Festivals</h2>
+          <ul class="record">
+            {awards.map((a: any) => (
+              <li><span class="record__date">{formatDate(a.data.date)}</span><span><span class="record__what">{a.data.title}{a.data.category ? `, ${a.data.category}` : ''}</span><span class="record__where">{a.data.url ? <a href={a.data.url}>{a.data.festival}</a> : a.data.festival}{a.data.location ? `, ${a.data.location}` : ''}</span></span></li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+    <div class="n-prose">{film.data.description.map((p: string) => <p>{p}</p>)}</div>
+  </div>
+
+  {awards.some((a: any) => a.data.image) && (
+    <div class="wrap n-certs">
+      {awards.filter((a: any) => a.data.image).map((a: any) => (
+        <figure class="n-cert win">
+          <span class="win__glass"><Image src={a.data.image} alt={`${a.data.title} certificate — ${a.data.festival}`} widths={[640, 1000, 1400]} sizes="(max-width: 800px) 100vw, 760px" quality={82} loading="lazy" /></span>
+          <figcaption>{a.data.title}{a.data.category ? ` · ${a.data.category}` : ''} — {a.data.festival}, {formatDate(a.data.date)}</figcaption>
+        </figure>
+      ))}
+    </div>
+  )}
+</Layout>

@@ -1,0 +1,9 @@
+---
+// The name as a rooftop sign: amber, restrained glow. The only thing in the city that glows.
+interface Props { name: string; tagline?: string; href?: string; size?: 'roof' | 'small'; heading?: boolean }
+const { name, tagline, href, size = 'roof', heading = false } = Astro.props;
+---
+<div class:list={['sign', size === 'small' && 'sign--small']}>
+  {heading ? <h1 class="sign__name">{name}</h1> : href ? <a class="sign__name" href={href}>{name}</a> : <p class="sign__name">{name}</p>}
+  {tagline && <p class="sign__tag">{tagline}</p>}
+</div>

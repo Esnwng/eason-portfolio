@@ -1,0 +1,83 @@
+---
+// A series page is a street canyon: the photographs as windows of varied sizes, storey by storey,
+// the lowest storey reflected in the street.
+import Layout from './Layout.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import Icons from '../../components/Icons.astro';
+import { Image } from 'astro:assets';
+import { seriesMeta } from './skyline';
+const { gallery, full, next, ogImage } = Astro.props;
+
+type Pane = { kind: 'img'; i: number; r: number } | { kind: 'video'; v: { src: string; poster: string; caption: string }; r: number };
+const panes: Pane[] = [
+  ...gallery.images.map((img: any, i: number) => ({ kind: 'img' as const, i, r: img.src.width / img.src.height })),
+  ...gallery.data.videos.map((v: any) => ({ kind: 'video' as const, v, r: 16 / 9 })),
+];
+// Storeys of 3, 4, 2 ... windows at alternating heights.
+const pattern = [3, 4, 2, 3];
+const heights = [1.05, 0.82, 1.2, 0.92];
+const storeys: { hk: number; panes: Pane[] }[] = [];
+for (let at = 0, s = 0; at < panes.length; s++) {
+  let n = pattern[s % pattern.length];
+  if (panes.length - (at + n) === 1) n += 1; // never leave a lone window on the last storey
+  storeys.push({ hk: heights[s % heights.length], panes: panes.slice(at, at + n) });
+  at += n;
+}
+const altFor = (i: number) => `${gallery.data.title}, photograph ${i + 1} of ${gallery.images.length}`;
+const sizesFor = (n: number) => `(max-width: 720px) 100vw, ${Math.round(100 / Math.max(1, n - 0.6))}vw`;
+---
+<Layout title={gallery.data.title} description={gallery.data.description || `${gallery.data.title} — photography by Eason Wang.`} ogImage={ogImage} sky="night">
+  <div class="wrap n-head">
+    <a class="plate plate--back n-back" href="/photography"><Icons name="arrow" /> All series</a>
+    <h1 class="h-street">{gallery.data.title}</h1>
+    <p class="n-meta">{seriesMeta(gallery)}</p>
+    {gallery.data.description && <p class="n-lede">{gallery.data.description}</p>}
+  </div>
+
+  <div class="wrap canyon-page">
+    {storeys.map((st, s) => {
+      const h = `--h: clamp(150px, calc(${st.hk} * 22vw), calc(${st.hk} * 360px))`;
+      return (
+        <div class="storey-block" style={h}>
+          <div class="facade">
+            <ul class="storey" role="list">
+              {st.panes.map((p) => (
+                <li style={`--r:${p.r.toFixed(4)}`}>
+                  {p.kind === 'img' ? (
+                    <a class="win" href={full[p.i]} data-lightbox={gallery.id} data-alt={altFor(p.i)}>
+                      <span class="win__glass"><Image src={gallery.images[p.i].src} alt={altFor(p.i)} widths={[480, 800, 1200, 1600]} sizes={sizesFor(st.panes.length)} quality={80} loading={s < 2 ? 'eager' : 'lazy'} /></span>
+                    </a>
+                  ) : (
+                    <figure class="win" style="margin:0">
+                      <span class="win__glass"><video controls playsinline preload="none" poster={p.v.poster || undefined} src={p.v.src} aria-label={p.v.caption || `${gallery.data.title} clip`}></video></span>
+                      {p.v.caption && <figcaption class="win__label"><span class="win__meta">{p.v.caption}</span></figcaption>}
+                    </figure>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="puddle" aria-hidden="true">
+            <div class="water water--still">
+              <div class="storey mirror">
+                {st.panes.map((p) => (
+                  <div style={`--r:${p.r.toFixed(4)};flex:var(--r) 1 calc(var(--r) * var(--h));min-width:0`}>
+                    <span class="win__glass">
+                      {p.kind === 'img'
+                        ? <Image src={gallery.images[p.i].src} alt="" widths={[480, 800, 1200, 1600]} sizes={sizesFor(st.panes.length)} quality={80} loading={s < 2 ? 'eager' : 'lazy'} />
+                        : p.v.poster ? <img src={p.v.poster} alt="" loading="lazy" decoding="async" /> : null}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    })}
+    {next && next.id !== gallery.id && (
+      <p class="next-series"><a class="plate" href={`/photography/${next.id}`}>Next series: {next.data.title} <Icons name="arrow" /></a></p>
+    )}
+  </div>
+  <Lightbox />
+</Layout>

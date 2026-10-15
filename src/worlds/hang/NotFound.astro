@@ -1,0 +1,14 @@
+---
+import Layout from './Layout.astro';
+const { site } = Astro.props;
+---
+<Layout title="Not found" page="lost">
+  <section class="room lost is-lit" aria-labelledby="lost">
+    <div class="lost__space" aria-hidden="true"></div>
+    <div class="lost__text">
+      <h1 class="vinyl vinyl--room" id="lost">Nothing hangs here</h1>
+      <p class="walltext">This wall is empty. The works are back at the entrance.</p>
+      <p><a class="vinyl vinyl--small" href="/">Return to the entrance</a></p>
+    </div>
+  </section>
+</Layout>

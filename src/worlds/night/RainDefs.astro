@@ -1,0 +1,19 @@
+---
+// SVG filters for the wet street. #rain-ripple is gently animated (paused off-screen and under
+// reduced motion by the Layout script); #rain-still is the same water without motion, for the
+// many smaller puddles further down a page.
+---
+<svg id="rain-defs" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <filter id="rain-ripple" x="-2%" y="-2%" width="104%" height="104%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.004 0.075" numOctaves="2" seed="7" result="noise">
+        <animate attributeName="baseFrequency" dur="11s" values="0.004 0.075;0.0055 0.09;0.004 0.075" repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+    <filter id="rain-still" x="-2%" y="-2%" width="104%" height="104%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.005 0.08" numOctaves="2" seed="3" result="noise" />
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="12" xChannelSelector="R" yChannelSelector="G" />
+    </filter>
+  </defs>
+</svg>

@@ -1,0 +1,27 @@
+---
+// Grease-pencil marks. Every path is drawn once on first view (stroke-dashoffset, see Layout script + global.css).
+interface Props { kind: 'loop-wide' | 'loop' | 'tick' | 'arrow'; class?: string; delay?: number }
+const { kind, class: cls, delay = 0 } = Astro.props;
+const style = `--d:${delay}ms`;
+---
+{kind === 'loop-wide' && (
+  <svg class:list={['mark', 'mark--loop', 'mark--wide', cls]} style={style} viewBox="0 0 400 170" aria-hidden="true" focusable="false">
+    <path class="ink" pathLength="1" stroke-width="2.4" d="M 84 20 C 170 4, 302 3, 361 24 C 397 39, 398 127, 351 150 C 270 170, 118 169, 47 146 C 6 128, 4 53, 49 31 C 99 11, 190 8, 238 15" />
+  </svg>
+)}
+{kind === 'loop' && (
+  <svg class:list={['mark', 'mark--loop', 'mark--std', cls]} style={style} viewBox="0 0 300 206" aria-hidden="true" focusable="false">
+    <path class="ink" pathLength="1" stroke-width="1.9" d="M 70 18 C 141 3, 241 5, 276 34 C 299 63, 297 161, 261 184 C 209 204, 89 203, 37 179 C 4 160, 3 64, 32 36 C 65 12, 131 8, 172 13" />
+  </svg>
+)}
+{kind === 'tick' && (
+  <svg class:list={['mark', 'mark--tick', cls]} style={style} viewBox="0 0 28 24" aria-hidden="true" focusable="false">
+    <path class="ink" pathLength="1" stroke-width="3" d="M 3 13 C 6 15, 8 18, 10 21 C 13 13, 18 6, 25 2" />
+  </svg>
+)}
+{kind === 'arrow' && (
+  <svg class:list={['mark', 'mark--arrow', cls]} style={style} viewBox="0 0 96 28" aria-hidden="true" focusable="false">
+    <path class="ink" pathLength="1" stroke-width="2.6" d="M 2 18 C 26 10, 54 20, 88 13" />
+    <path class="ink ink--late" pathLength="1" stroke-width="2.6" d="M 73 4 C 80 8, 85 11, 90 13 C 84 16, 79 20, 75 25" />
+  </svg>
+)}

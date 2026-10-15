@@ -9,7 +9,7 @@ interface Props { title?: string; description?: string; ogImage?: string; }
 const site = await getSite();
 const { title, description = `${site.name} — ${site.tagline}.`, ogImage } = Astro.props;
 const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const canonical = new URL(Astro.url.pathname.replace(/index\.html$/, '').replace(/\.html$/, ''), Astro.site);
 ---
 <!doctype html>
 <html lang="en">

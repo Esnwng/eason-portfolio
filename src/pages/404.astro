@@ -1,7 +1,6 @@
 ---
-import { worldComponent } from '../lib/world';
+import NotFound from '@world/NotFound.astro';
 import { getSite } from '../lib/content';
-const NotFound = await worldComponent('NotFound');
 const site = await getSite();
 ---
 <NotFound site={site} />

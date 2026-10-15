@@ -1,0 +1,27 @@
+---
+// The screening alcove: a recess in the wall where a film is projected.
+// As a doorway (home, film index) the projected still leads to the film's room.
+import { Image } from 'astro:assets';
+import Label from './Label.astro';
+import AwardWall from './AwardWall.astro';
+interface Props { film: any; films?: any[]; level?: 2 | 3; eager?: boolean }
+const { film, films = [], level = 2, eager = false } = Astro.props;
+const H = level === 2 ? 'h2' : 'h3';
+const href = `/work/${film.id}`;
+const awarded = film.awards?.length > 0;
+---
+<section class="room screening" aria-labelledby={`film-${film.id}`}>
+  <div class="screening__wall">
+    <H class="vinyl vinyl--room" id={`film-${film.id}`}><a href={href}>{film.data.title}</a></H>
+    {film.data.logline && <p class="walltext">{film.data.logline}</p>}
+  </div>
+  <div class="alcove">
+    <a class="alcove__screen" href={href} aria-label={`${film.data.title}: enter the screening room`}>
+      <Image src={film.data.poster} alt={`${film.data.title} still`} widths={[640, 1000, 1400, 1800]} sizes="(max-width: 960px) 92vw, 62vw" quality={82} loading={eager ? 'eager' : 'lazy'} />
+    </a>
+  </div>
+  <div class="screening__label">
+    <Label title={film.data.title} dot={awarded} series={film.data.role} year={film.data.year} medium={film.data.runtime || undefined} href={href} action="Enter the screening room" />
+  </div>
+  {awarded && <AwardWall awards={film.awards} films={films} level={level === 2 ? 3 : 3} class="screening__awards" />}
+</section>

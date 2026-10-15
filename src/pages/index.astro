@@ -1,7 +1,6 @@
 ---
-import { worldComponent } from '../lib/world';
+import Home from '@world/Home.astro';
 import { homeProps } from '../lib/pages';
-const Home = await worldComponent('Home');
 const props = await homeProps();
 ---
 <Home {...props} />

@@ -1,0 +1,94 @@
+---
+import '@fontsource-variable/big-shoulders-display';
+import '@fontsource-variable/sofia-sans-condensed';
+import './global.css';
+import Sign from './Sign.astro';
+import StreetNav from './StreetNav.astro';
+import RainDefs from './RainDefs.astro';
+import Footer from './Footer.astro';
+import Distant from './Distant.astro';
+import { getSite } from '../../lib/content';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  /** walk = the home page's full night (blue hour -> rain-black -> dawn); night / dawn = a fixed hour */
+  sky?: 'walk' | 'night' | 'dawn';
+  /** home draws its own sign and nav inside the skyline */
+  home?: boolean;
+}
+const site = await getSite();
+const { title, description = `${site.name} — ${site.tagline}.`, ogImage, sky = 'night', home = false } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
+const canonical = new URL(Astro.url.pathname.replace(/index\.html$/, '').replace(/\.html$/, ''), Astro.site);
+const themeColor = sky === 'dawn' ? '#1b2630' : sky === 'walk' ? '#0b1a3a' : '#07070a';
+---
+<!doctype html>
+<html lang="en" data-sky={sky}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content={themeColor} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    {ogImage && <meta property="og:image" content={new URL(ogImage, Astro.site)} />}
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <RainDefs />
+    {!home && (
+      <header class="roofline" data-weather>
+        <div class="rain" aria-hidden="true"></div>
+        <div class="wrap roofline__inner">
+          <Sign name={site.name} href="/" size="small" />
+          <StreetNav />
+        </div>
+        <Distant class="roofline__city" seed={sky === 'dawn' ? 5 : 41} h={160} min={0.25} max={0.95} lights={sky === 'dawn' ? 0.1 : 0.45} />
+      </header>
+    )}
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const root = document.documentElement;
+      const defs = document.getElementById('rain-defs') as unknown as SVGSVGElement | null;
+
+      // Weather runs only while a wet street is on screen: rain streaks and the ripple filter pause off-screen.
+      const wet = Array.from(document.querySelectorAll<HTMLElement>('[data-weather]'));
+      const setRipple = () => {
+        if (!defs) return;
+        const anyOn = wet.some((w) => !w.classList.contains('is-off'));
+        if (reduce || !anyOn) defs.pauseAnimations(); else defs.unpauseAnimations();
+      };
+      if (reduce) defs?.pauseAnimations();
+      if ('IntersectionObserver' in window && wet.length) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) e.target.classList.toggle('is-off', !e.isIntersecting);
+          setRipple();
+        });
+        wet.forEach((w) => io.observe(w));
+      } else if (!wet.length) defs?.pauseAnimations();
+
+      // The hour: CSS scroll-driven animation where supported; otherwise the section in view sets it.
+      const scrollTimelines = window.CSS && CSS.supports('animation-timeline: scroll()');
+      if (!reduce && !scrollTimelines && 'IntersectionObserver' in window) {
+        const marks = document.querySelectorAll<HTMLElement>('[data-hour]');
+        if (marks.length) {
+          const io2 = new IntersectionObserver((entries) => {
+            for (const e of entries) if (e.isIntersecting) root.dataset.now = (e.target as HTMLElement).dataset.hour;
+          }, { rootMargin: '-45% 0px -45% 0px' });
+          marks.forEach((m) => io2.observe(m));
+        }
+      }
+    </script>
+  </body>
+</html>

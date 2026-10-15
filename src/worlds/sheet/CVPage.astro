@@ -1,0 +1,82 @@
+---
+import Layout from './Layout.astro';
+import { formatDate } from '../../lib/content';
+const { site, films, awards, exhibitions, press, galleries } = Astro.props;
+const filmTitle = (id: string) => films.find((f: any) => f.id === id)?.data.title ?? id;
+const { email, instagram, note } = site.contact;
+---
+<Layout title="CV" description={`Curriculum vitae of ${site.name}: filmography, festival record and photography.`}>
+  <div class="verso">
+    <article class="idx">
+      <header class="idx__head">
+        <h1 class="display idx__name">{site.name}</h1>
+        <p class="idx__tag">{site.tagline}</p>
+        <p class="idx__contact">
+          {email ? <a href={`mailto:${email}`}>{email}</a> : note}
+          {instagram && <> · <a href={`https://instagram.com/${instagram}`} rel="noopener">@{instagram}</a></>}
+        </p>
+      </header>
+
+      <section class="idx__sec" aria-labelledby="cv-profile">
+        <h2 id="cv-profile">Profile</h2>
+        <p class="idx__profile">{site.about[0]}</p>
+      </section>
+
+      {films.length > 0 && (
+        <section class="idx__sec" aria-labelledby="cv-film">
+          <h2 id="cv-film">Filmography</h2>
+          <ul class="rows">
+            {films.map((f: any) => (
+              <li><span class="code rows__date">{f.data.year}</span><span><a href={`/work/${f.id}`}>{f.data.title}</a>, {f.data.role}{f.data.runtime ? `, ${f.data.runtime}` : ''}.{f.data.logline ? ` ${f.data.logline}` : ''}</span></li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {awards.length > 0 && (
+        <section class="idx__sec" aria-labelledby="cv-awards">
+          <h2 id="cv-awards">Awards and selections</h2>
+          <ul class="rows">
+            {awards.map((a: any) => (
+              <li><span class="code rows__date">{formatDate(a.data.date)}</span><span><strong>{a.data.title}</strong>{a.data.category ? `, ${a.data.category}` : ''}. {a.data.url ? <a href={a.data.url} rel="noopener">{a.data.festival}</a> : a.data.festival}{a.data.location ? `, ${a.data.location}` : ''}.{a.data.work ? ` ${filmTitle(a.data.work)}` : ''}{a.data.role ? ` (${a.data.role})` : ''}{a.data.work || a.data.role ? '.' : ''}</span></li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {exhibitions.length > 0 && (
+        <section class="idx__sec" aria-labelledby="cv-ex">
+          <h2 id="cv-ex">Exhibitions</h2>
+          <ul class="rows">
+            {exhibitions.map((x: any) => (
+              <li><span class="code rows__date">{formatDate(x.data.date)}</span><span>{x.data.url ? <a href={x.data.url} rel="noopener">{x.data.title}</a> : x.data.title}. {x.data.venue}{x.data.location ? `, ${x.data.location}` : ''}.{x.data.role ? ` ${x.data.role}.` : ''}</span></li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {press.length > 0 && (
+        <section class="idx__sec" aria-labelledby="cv-press">
+          <h2 id="cv-press">Press</h2>
+          <ul class="rows">
+            {press.map((p: any) => (
+              <li><span class="code rows__date">{formatDate(p.data.date)}</span><span>{p.data.url ? <a href={p.data.url} rel="noopener">{p.data.title}</a> : p.data.title}. {p.data.outlet}.</span></li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {galleries.length > 0 && (
+        <section class="idx__sec" aria-labelledby="cv-photo">
+          <h2 id="cv-photo">Photography series</h2>
+          <ul class="rows">
+            {galleries.map((g: any) => (
+              <li><span class="code rows__date">{g.data.year}</span><span><a href={`/photography/${g.id}`}>{g.data.title}</a>{g.data.location ? `, ${g.data.location}` : ''}. {g.count} {g.count === 1 ? 'work' : 'works'}.</span></li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </article>
+    <p class="no-print verso__print"><button class="go" type="button" onclick="window.print()">Print the card or save it as PDF</button></p>
+  </div>
+</Layout>

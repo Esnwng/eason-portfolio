@@ -1,0 +1,80 @@
+---
+import Layout from './Layout.astro';
+import { formatDate } from '../../lib/content';
+const { site, films, awards, exhibitions, press, galleries } = Astro.props;
+const filmTitle = (id: string) => films.find((f: any) => f.id === id)?.data.title ?? id;
+const contactBits = [site.contact.email, site.contact.instagram && `@${site.contact.instagram}`].filter(Boolean);
+---
+<Layout title="CV" description={`Curriculum vitae of ${site.name}: filmography, awards and selections, photography series.`} page="cv">
+  <article class="room cv is-lit" aria-labelledby="cv-name">
+    <header class="cv__head">
+      <h1 class="vinyl vinyl--wall" id="cv-name">{site.name}</h1>
+      <p class="vinyl vinyl--small">{site.tagline}</p>
+      <p class="cv__roles">{site.roles.join(' · ')}</p>
+      {contactBits.length > 0 ? <p class="cv__roles">{contactBits.join(' · ')}</p> : site.contact.note && <p class="cv__roles">{site.contact.note}</p>}
+      <p class="no-print"><button class="cv__print" type="button" onclick="window.print()">Print the handout</button></p>
+    </header>
+
+    <div class="cv__panel">
+      {films.length > 0 && (
+        <section class="cv__block" aria-labelledby="cv-film">
+          <h2 class="cv__h" id="cv-film">Filmography</h2>
+          <table>
+            <thead><tr><th scope="col">Year</th><th scope="col">Title</th><th scope="col">Role</th><th scope="col">Notes</th></tr></thead>
+            <tbody>{films.map((f: any) => (
+              <tr><td class="num">{f.data.year}</td><td><a href={`/work/${f.id}`}>{f.data.title}</a>{f.awards.length > 0 && <span class="dot" title="Awarded"><span class="sr-only"> (awarded)</span></span>}</td><td>{f.data.role}</td><td>{[f.data.runtime, ...f.data.credits.filter((c: any) => c.value !== site.name).map((c: any) => `${c.label}: ${c.value}`)].filter(Boolean).join('; ')}</td></tr>
+            ))}</tbody>
+          </table>
+        </section>
+      )}
+      {awards.length > 0 && (
+        <section class="cv__block" aria-labelledby="cv-awards">
+          <h2 class="cv__h" id="cv-awards">Awards and selections</h2>
+          <table>
+            <thead><tr><th scope="col">Date</th><th scope="col">Award</th><th scope="col">Festival</th><th scope="col">Work</th></tr></thead>
+            <tbody>{awards.map((a: any) => (
+              <tr><td class="num">{formatDate(a.data.date)}</td><td>{a.data.title}{a.data.category ? `, ${a.data.category}` : ''}</td><td>{a.data.url ? <a href={a.data.url} rel="noopener">{a.data.festival}</a> : a.data.festival}{a.data.location ? `, ${a.data.location}` : ''}</td><td>{a.data.work ? filmTitle(a.data.work) : ''}{a.data.role ? ` (${a.data.role})` : ''}</td></tr>
+            ))}</tbody>
+          </table>
+        </section>
+      )}
+      {exhibitions.length > 0 && (
+        <section class="cv__block" aria-labelledby="cv-exh">
+          <h2 class="cv__h" id="cv-exh">Exhibitions</h2>
+          <table>
+            <thead><tr><th scope="col">Date</th><th scope="col">Exhibition</th><th scope="col">Venue</th><th scope="col">Role</th></tr></thead>
+            <tbody>{exhibitions.map((x: any) => (
+              <tr><td class="num">{formatDate(x.data.date)}</td><td>{x.data.url ? <a href={x.data.url} rel="noopener">{x.data.title}</a> : x.data.title}</td><td>{x.data.venue}{x.data.location ? `, ${x.data.location}` : ''}</td><td>{x.data.role}</td></tr>
+            ))}</tbody>
+          </table>
+        </section>
+      )}
+      {press.length > 0 && (
+        <section class="cv__block" aria-labelledby="cv-press">
+          <h2 class="cv__h" id="cv-press">Press</h2>
+          <table>
+            <thead><tr><th scope="col">Date</th><th scope="col">Headline</th><th scope="col">Outlet</th></tr></thead>
+            <tbody>{press.map((p: any) => (
+              <tr><td class="num">{formatDate(p.data.date)}</td><td>{p.data.url ? <a href={p.data.url} rel="noopener">{p.data.title}</a> : p.data.title}</td><td>{p.data.outlet}</td></tr>
+            ))}</tbody>
+          </table>
+        </section>
+      )}
+      {galleries.length > 0 && (
+        <section class="cv__block" aria-labelledby="cv-photo">
+          <h2 class="cv__h" id="cv-photo">Series</h2>
+          <table>
+            <thead><tr><th scope="col">Series</th><th scope="col">Location</th><th scope="col">Year</th><th scope="col" class="num">Works</th></tr></thead>
+            <tbody>{galleries.map((g: any) => (
+              <tr><td><a href={`/photography/${g.id}`}>{g.data.title}</a></td><td>{g.data.location || '–'}</td><td class="num">{g.data.year || '–'}</td><td class="num">{g.count}</td></tr>
+            ))}</tbody>
+          </table>
+        </section>
+      )}
+      <section class="cv__block" aria-labelledby="cv-about">
+        <h2 class="cv__h" id="cv-about">About</h2>
+        <div class="cv__about">{site.about.map((p: string) => <p>{p}</p>)}</div>
+      </section>
+    </div>
+  </article>
+</Layout>

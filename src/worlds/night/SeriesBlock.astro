@@ -1,0 +1,44 @@
+---
+// One photo series as a block of lit windows in the street canyon, its storey reflected in a puddle.
+import { Image } from 'astro:assets';
+import type { Gallery } from '../../lib/content';
+import { seriesMeta } from './skyline';
+interface Props { gallery: Gallery; max?: number; index?: number; level?: 'h2' | 'h3'; describe?: boolean }
+const { gallery: g, max = 3, index = 0, level = 'h3', describe = false } = Astro.props;
+const coverSrc = g.cover?.src;
+const ordered = [...g.images].sort((a, b) => Number(b.src.src === coverSrc) - Number(a.src.src === coverSrc));
+const picks = ordered.slice(0, max).map((img) => ({ ...img, r: img.src.width / img.src.height, n: g.images.indexOf(img) + 1 }));
+const hk = [1, 0.84, 1.12, 0.92, 1.04][index % 5];
+const H = level;
+const sizes = `(max-width: 720px) 100vw, ${Math.min(60, Math.round(100 / Math.max(1, picks.length - 1)))}vw`;
+const href = `/photography/${g.id}`;
+---
+<article class="block" style={`--hk:${hk}`}>
+  <div class="block__head">
+    <H><a href={href}>{g.data.title}</a></H>
+    <p class="block__meta">{seriesMeta(g)}</p>
+    {describe && g.data.description && <p class="block__desc">{g.data.description}</p>}
+  </div>
+  <div class="facade">
+    <ul class="storey" role="list">
+      {picks.map((p) => (
+        <li style={`--r:${p.r.toFixed(4)}`}>
+          <a class="win" href={href}>
+            <span class="win__glass"><Image src={p.src} alt={`${g.data.title}, photograph ${p.n} of ${g.images.length}`} widths={[480, 800, 1200]} sizes={sizes} quality={80} loading="lazy" /></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="puddle" aria-hidden="true">
+    <div class="water water--still">
+      <div class="storey mirror">
+        {picks.map((p) => (
+          <div style={`--r:${p.r.toFixed(4)};flex:var(--r) 1 calc(var(--r) * var(--h));min-width:0`}>
+            <span class="win__glass"><Image src={p.src} alt="" widths={[480, 800, 1200]} sizes={sizes} quality={80} loading="lazy" /></span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,54 @@
+---
+import Layout from './Layout.astro';
+import Lightbox from '../../components/Lightbox.astro';
+import Print from './Print.astro';
+import Label from './Label.astro';
+import { composeWall, chunkWalls, aspect, sizesFor, plural } from './hang';
+const { site, gallery, full, next, ogImage } = Astro.props;
+const d = gallery.data;
+const indexed = gallery.images.map((img: any, i: number) => ({ img, i }));
+const walls = chunkWalls(indexed);
+// Lead of each wall is its widest-weighted slot; keep reading order otherwise.
+const hung = walls.map((wall, w) => composeWall(wall, (x: any) => aspect(x.img.src), wall.length === 3 ? 1 : 0, w));
+const total = gallery.images.length;
+---
+<Layout title={d.title} description={d.description || `${d.title}: photography by ${site.name}.`} ogImage={ogImage} page="photography">
+  <header class="room roomhead roomhead--series is-lit">
+    <h1 class="vinyl vinyl--wall">{d.title}</h1>
+    {d.description && <p class="walltext">{d.description}</p>}
+    <p class="vinyl vinyl--small roomhead__facts">{[d.location, d.year, plural(gallery.count, 'work')].filter(Boolean).join(' · ')}</p>
+  </header>
+
+  {hung.map((wall, w) => (
+    <section class:list={['room', 'wall', { 'wall--quiet': wall.length === 1 }]} aria-label={`${d.title}, wall ${w + 1}`}>
+      <div class="hang">
+        {wall.map((h) => (
+          <Print src={h.item.img.src} alt={`${d.title} ${h.item.i + 1}`} href={full[h.item.i]} lightbox={gallery.id} caption={d.title} w={h.w} wm={h.wm} side={h.side} sizes={sizesFor(h.w, h.wm)} eager={w === 0}>
+            <Label title={d.title} count={`${h.item.i + 1} of ${total}`} />
+          </Print>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  {d.videos.length > 0 && (
+    <section class="room wall" aria-label={`${d.title}, moving image`}>
+      <div class="hang">
+        {d.videos.map((v: any, k: number) => (
+          <figure class="work work--screen" style="--w:60;--wm:100;--side:center;--ar:1.7778">
+            <div class="work__frame work__frame--screen">
+              <video controls playsinline preload="none" poster={v.poster || undefined} src={v.src}></video>
+            </div>
+            <figcaption class="work__label"><Label title={v.caption || `${d.title} clip ${k + 1}`} series={d.title} /></figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <nav class="room doorways" aria-label="Leave the room">
+    <a class="vinyl vinyl--small" href="/photography">All series</a>
+    {next && next.id !== gallery.id && <a class="vinyl vinyl--small doorways__next" href={`/photography/${next.id}`}>Next room: {next.data.title}</a>}
+  </nav>
+  <Lightbox />
+</Layout>
